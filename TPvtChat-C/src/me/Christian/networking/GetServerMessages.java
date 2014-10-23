@@ -26,6 +26,7 @@ public class GetServerMessages{
 					if(!Main.names.contains(Args[1])){
 						Main.names.add(Args[1]);
 					}
+					Main.ChangeCells(0, "");
 					Main.AddToMessageField(".System " + Args[1] + " connected.");
 				}
 			});
@@ -36,6 +37,7 @@ public class GetServerMessages{
 					if(Main.names.contains(Args[1])){
 						Main.names.remove(Args[1]);
 					}
+					Main.ChangeCells(0, "");
 					Main.AddToMessageField(".System " + Args[1] + " disconnected.");
 				}
 			});
@@ -49,6 +51,7 @@ public class GetServerMessages{
 					}else{
 						Main.names.add(Args[2]);
 					}
+					Main.ChangeCells(0, "");
 					Main.AddToMessageField(".System " + Args[1] + " changed name to " + Args[2] + ".");
 				}
 			});

@@ -20,6 +20,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ColorPicker;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextArea;
@@ -33,6 +34,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.Callback;
 import javafx.util.Duration;
 
 public class Main extends Application{
@@ -139,6 +141,7 @@ public class Main extends Application{
 
 		HBox RightList = new HBox();
 		onlineusers = new ListView<>(names);
+		
 		RightList.setPadding(new Insets(15, 12, 15, 12));
 		onlineusers.setItems(names);
 		onlineusers.setPrefWidth(150);
@@ -385,6 +388,28 @@ public class Main extends Application{
 			e.printStackTrace();
 		}
 		return ComputerMac;
+	}
+	
+	static class ColorRectCell extends ListCell<String> {
+        @Override
+        public void updateItem(String item, boolean empty) {
+            super.updateItem(item, empty);
+            if (item != null) {
+                if(item.startsWith(".")){
+                	this.setTextFill(Color.RED);
+                	setText(item);
+                }
+            }
+        }
+    }
+	
+	public static void ChangeCells(int whattodo, String item){
+		onlineusers.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
+			@Override
+			public ListCell<String> call(ListView<String> arg0) {
+				return new ColorRectCell();
+			}
+		});
 	}
 
 }
