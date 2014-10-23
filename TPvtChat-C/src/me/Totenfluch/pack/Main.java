@@ -398,6 +398,8 @@ public class Main extends Application{
                 if(item.startsWith(".")){
                 	this.setTextFill(Color.RED);
                 	setText(item);
+                }else{
+                	setText(item);
                 }
             }
         }
