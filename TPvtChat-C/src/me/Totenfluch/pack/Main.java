@@ -70,12 +70,12 @@ public class Main extends Application{
 		ComputerName = lComputerIP.getHostName();
 		ComputerIP = lComputerIP.getHostAddress();
 		ActiveUsername = ComputerName;
-		
+
 		launch(args);
 	}
 
 	public void start(Stage primaryStage) {
-		
+
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			@Override
 			public void handle(WindowEvent event) {
@@ -141,7 +141,7 @@ public class Main extends Application{
 
 		HBox RightList = new HBox();
 		onlineusers = new ListView<>(names);
-		
+
 		RightList.setPadding(new Insets(15, 12, 15, 12));
 		onlineusers.setItems(names);
 		onlineusers.setPrefWidth(150);
@@ -153,7 +153,7 @@ public class Main extends Application{
 		// TOP
 
 		VBox TopOrgan = new VBox();
-		
+
 		HBox TopKey = new HBox();
 		Keyfield = new TextField("");
 		Keyfield.setPromptText("Enter your Private Key here");
@@ -180,23 +180,23 @@ public class Main extends Application{
 			@Override
 			public void changed(ObservableValue<? extends String> arg0,
 					String arg1, String arg2) {
-					int keyamount = Keyfield.getText().length();
-					if(keyamount > 128){
-						Keyfield.setText(Keyfield.getText().substring(0, 128));
-						keyamount = 128;
-					}
-					KeyAmount.setText(keyamount+"/128");
-					if(keyamount == 128){
-						Keylock.setDisable(false);
-					}else{
-						Keylock.setDisable(true);
-					}
+				int keyamount = Keyfield.getText().length();
+				if(keyamount > 128){
+					Keyfield.setText(Keyfield.getText().substring(0, 128));
+					keyamount = 128;
+				}
+				KeyAmount.setText(keyamount+"/128");
+				if(keyamount == 128){
+					Keylock.setDisable(false);
+				}else{
+					Keylock.setDisable(true);
+				}
 			}
 		});
 		TopKey.setSpacing(10);
 		TopKey.getChildren().addAll(Keylock, Keyfield, KeyAmount);
 		TopKey.setPadding(new Insets(15, 12, 0, 12));
-		
+
 		HBox TopBoxes = new HBox();
 		Button UsernameRefresh = new Button("Use");
 		UsernameRefresh.setPrefSize(75, 20);
@@ -220,13 +220,13 @@ public class Main extends Application{
 			@Override
 			public void changed(ObservableValue<? extends String> arg0,
 					String arg1, String arg2) {
-					int keyamount = Username.getText().length();
-					if(keyamount > 16){
-						Username.setText(Username.getText().substring(0, 16));
-					}
+				int keyamount = Username.getText().length();
+				if(keyamount > 16){
+					Username.setText(Username.getText().substring(0, 16));
+				}
 			}
 		});
-		
+
 		Slider FontSize = new Slider();
 		FontSize.setMin(0);
 		FontSize.setMax(40);
@@ -241,24 +241,24 @@ public class Main extends Application{
 			@Override
 			public void changed(ObservableValue<? extends Number> arg0,
 					Number old_val, Number new_val) {
-					ActiveFontSize = Integer.valueOf((int) Math.floor(Double.valueOf(new_val.toString())));
-					if(ActiveFontSize == 0){
-						ActiveFontSize = 1;
-					}
-					Messages.setFont(new Font(ActiveFont, ActiveFontSize));
+				ActiveFontSize = Integer.valueOf((int) Math.floor(Double.valueOf(new_val.toString())));
+				if(ActiveFontSize == 0){
+					ActiveFontSize = 1;
+				}
+				Messages.setFont(new Font(ActiveFont, ActiveFontSize));
 			}
 		});
-		
+
 		final ColorPicker colorPicker = new ColorPicker();
-        colorPicker.setValue(Color.BLACK);
-		
+		colorPicker.setValue(Color.BLACK);
+
 		colorPicker.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
 				Messages.setStyle("-fx-background-color: Purple; -fx-text-fill: "+ toRgbString(colorPicker.getValue()) + ";");
 			}
-        });
-		
+		});
+
 		ChoiceBox<String> FontChooser = new ChoiceBox<String>();
 		FontChooser.setItems(FXCollections.observableArrayList("Futura", "Arial", "Calibri", "Serif", "Courier New"));
 		FontChooser.setTooltip(new Tooltip("Select your favourite font"));
@@ -267,20 +267,20 @@ public class Main extends Application{
 			@Override
 			public void changed(ObservableValue<? extends Number> arg0,
 					Number old_val, Number new_val) {
-					ActiveFont = FontChooser.getSelectionModel().getSelectedItem();
-					Messages.setFont(new Font(ActiveFont, ActiveFontSize));
+				ActiveFont = FontChooser.getSelectionModel().getSelectedItem();
+				Messages.setFont(new Font(ActiveFont, ActiveFontSize));
 			}
 		});
-		
+
 		TopBoxes.getChildren().addAll(UsernameRefresh, Username, FontSize, colorPicker, FontChooser);
-		
+
 		TopBoxes.setSpacing(10);
 		TopBoxes.setPadding(new Insets(15, 12, 0, 12));
-		
+
 		TopOrgan.getChildren().addAll(TopKey, TopBoxes);
-		
+
 		border.setTop(TopOrgan);
-		
+
 		// Global
 
 		Scene s = new Scene(border, 900, 500);
@@ -293,18 +293,18 @@ public class Main extends Application{
 	public static void AddToMessageField(String s){
 		Messages.appendText(s+"\n");
 	}
-	
-	private String toRgbString(Color c) {
-        return "rgb("
-                          + to255Int(c.getRed())
-                    + "," + to255Int(c.getGreen())
-                    + "," + to255Int(c.getBlue())
-             + ")";
-    }
 
-    private int to255Int(double d) {
-        return (int) (d * 255);
-    }
+	private String toRgbString(Color c) {
+		return "rgb("
+				+ to255Int(c.getRed())
+				+ "," + to255Int(c.getGreen())
+				+ "," + to255Int(c.getBlue())
+				+ ")";
+	}
+
+	private int to255Int(double d) {
+		return (int) (d * 255);
+	}
 
 	public static boolean RemoveFromMessageField(String s){
 		int n = Messages.getText().length();
@@ -312,6 +312,9 @@ public class Main extends Application{
 		s = "<PENDING> "+s;
 		l = l.replace(s, s.replace("<PENDING> text ", ""));
 		try{
+			if(l.length() > 600){
+				l = l.substring(l.length()-600, l.length());
+			}
 			Messages.setText(l);
 		}catch(Exception e){
 			e.printStackTrace();
@@ -353,7 +356,7 @@ public class Main extends Application{
 		try{connection.running = false;}catch(Exception e){}
 		try{connection = null;}catch(Exception e){}
 	}
-	
+
 	public static boolean ConnectToServer(String ip, int port){
 		try{
 			connection = new Client(ip, port);
@@ -368,7 +371,7 @@ public class Main extends Application{
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-		
+
 		return true;
 	}
 
@@ -389,23 +392,32 @@ public class Main extends Application{
 		}
 		return ComputerMac;
 	}
-	
+
 	static class ColorRectCell extends ListCell<String> {
-        @Override
-        public void updateItem(String item, boolean empty) {
-            super.updateItem(item, empty);
-            if (item != null) {
-                if(item.startsWith(".")){
-                	this.setTextFill(Color.RED);
-                	setText(item);
-                }else{
-                	setText(item);
-                }
-            }
-        }
-    }
-	
-	public static void ChangeCells(int whattodo, String item){
+		@Override
+		public void updateItem(String item, boolean empty) {
+			super.updateItem(item, empty);
+			if (item != null) {
+				if(item.startsWith(".")){
+					this.setTextFill(Color.RED);
+					setText(item);
+				}else if(item.startsWith("<F>")){
+					this.setTextFill(Color.GREEN);
+					setText(item.substring(3, item.length()));
+				}else{
+					setText(item);
+				}
+			}
+		}
+	}
+
+	public static void ChangeCellColor(int whattodo, String username){
+		if(whattodo == 1){
+			onlineusers.getItems().contains(username);
+			ObservableList<String> n = onlineusers.getItems();
+			n.removeAll(username);
+			n.add("<F>"+username);
+		}
 		onlineusers.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
 			@Override
 			public ListCell<String> call(ListView<String> arg0) {
@@ -413,5 +425,4 @@ public class Main extends Application{
 			}
 		});
 	}
-
 }

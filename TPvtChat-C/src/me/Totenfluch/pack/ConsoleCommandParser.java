@@ -1,9 +1,12 @@
 package me.Totenfluch.pack;
 
-import me.Christian.networking.Client;
+import java.util.Hashtable;
 
+import me.Christian.networking.Client;
 public class ConsoleCommandParser {
-	public static String[] Commands = {".help", ".connect <IP> <Port>", ".disconnect", ".admin"};
+	public static Hashtable<String, String> UserTable = new Hashtable<String, String>();
+	
+	public static String[] Commands = {".help", ".connect <IP> <Port>", ".disconnect", ".admin", ".friend"};
 	public static void parse(String[] Args){
 		if(Args[0].equals(".help")){
 				Main.AddToMessageField(".System Available Commands:");
@@ -24,6 +27,16 @@ public class ConsoleCommandParser {
 		}else if(Args[0].equals(".admin")){
 			Client.processMessage(".admin");
 			Main.text.setText("");
+		}else if(Args[0].equals(".friend")){
+			String temp = Main.onlineusers.getSelectionModel().getSelectedItem();
+			Main.AddToMessageField(".System Added " + temp + " as friend.");
+			Main.ChangeCellColor(1, temp);
+			UserTable.remove(temp);
+			UserTable.put(temp, "Friend");
+			Main.text.setText("");
+		}else if(Args[0].equals(".kick")){
+			String temp = Main.onlineusers.getSelectionModel().getSelectedItem();
+			Client.processMessage(".kick " + temp);
 		}else{
 			Main.AddToConsoleField("[-] Invalid command");
 		}

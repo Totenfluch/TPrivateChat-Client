@@ -134,9 +134,14 @@ public class Crypter {
 	}
 	
 	public static boolean doYourThing(String msg){
-		msg = encrypt(msg, 0);
-		Client.processMessage(msg);
-		return true;
+		if(thekey != null){
+			msg = encrypt(msg, 0);
+			Client.processMessage(msg);
+			return true;
+		}else{
+			Main.AddToMessageField(".System Message rejected. Use a Key!");
+			return true;
+		}
 	}
 	
 	

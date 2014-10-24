@@ -1,5 +1,6 @@
 package me.Christian.networking;
 
+import me.Totenfluch.pack.ConsoleCommandParser;
 import me.Totenfluch.pack.Crypter;
 import me.Totenfluch.pack.Main;
 import javafx.application.Platform;
@@ -26,7 +27,10 @@ public class GetServerMessages{
 					if(!Main.names.contains(Args[1])){
 						Main.names.add(Args[1]);
 					}
-					Main.ChangeCells(0, "");
+					if(!ConsoleCommandParser.UserTable.contains(Args[1])){
+						ConsoleCommandParser.UserTable.put(Args[1], "User");
+					}
+					//Main.ChangeCellColor(0, "x");
 					Main.AddToMessageField(".System " + Args[1] + " connected.");
 				}
 			});
@@ -37,7 +41,10 @@ public class GetServerMessages{
 					if(Main.names.contains(Args[1])){
 						Main.names.remove(Args[1]);
 					}
-					Main.ChangeCells(0, "");
+					if(ConsoleCommandParser.UserTable.contains(Args[1])){
+						ConsoleCommandParser.UserTable.remove(Args[1]);
+					}
+					//Main.ChangeCellColor(0, "x");
 					Main.AddToMessageField(".System " + Args[1] + " disconnected.");
 				}
 			});
@@ -51,7 +58,14 @@ public class GetServerMessages{
 					}else{
 						Main.names.add(Args[2]);
 					}
-					Main.ChangeCells(0, "");
+					
+					if(ConsoleCommandParser.UserTable.contains(Args[1])){
+						ConsoleCommandParser.UserTable.remove(Args[1]);
+						ConsoleCommandParser.UserTable.put(Args[2], "User");
+					}else{
+						ConsoleCommandParser.UserTable.put(Args[2], "User");
+					}
+					//Main.ChangeCellColor(0, "x");
 					Main.AddToMessageField(".System " + Args[1] + " changed name to " + Args[2] + ".");
 				}
 			});
