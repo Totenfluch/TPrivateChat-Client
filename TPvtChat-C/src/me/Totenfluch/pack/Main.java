@@ -1,12 +1,15 @@
 package me.Totenfluch.pack;
 
 
+
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.UnknownHostException;
 
 import me.Christian.networking.Client;
+import javafx.scene.control.CheckBox;
 import javafx.animation.KeyFrame;
+import javafx.animation.PathTransition;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
@@ -26,6 +29,8 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -52,13 +57,16 @@ public class Main extends Application{
 	public static TextField text;
 	public static TextArea Messages, console;
 	public static ListView<String> onlineusers;
-	public static TextField Keyfield, Username;
+	public static TextField Keyfield, Username, MessageSendDelayField;
+	public static CheckBox DontSend;
 	public static Button Keylock;
 	public static Text KeyAmount;
 	public String ActiveFont = "Futura";
 	public int ActiveFontSize = 20;
 	public static final ObservableList<String> names = 
 			FXCollections.observableArrayList();
+
+	public static PathTransition OptionBoxFlyIn = new PathTransition();
 
 	public static void main(String[] args){
 		try {
@@ -75,16 +83,16 @@ public class Main extends Application{
 	}
 
 	public void start(Stage primaryStage) {
-
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			@Override
 			public void handle(WindowEvent event) {
 				System.exit(0);
 			}
 		});;
+		
 
 		BorderPane border = new BorderPane();
-
+		
 		HBox bottomfield = new HBox();
 
 		// BOTTOM
@@ -123,7 +131,7 @@ public class Main extends Application{
 
 		HBox centerfield = new HBox();
 		Messages = new TextArea();
-		Messages.setPrefWidth(700);
+		Messages.setPrefWidth(500);
 		Messages.setEditable(false);
 		Messages.setFont(new Font("Futura", 20));
 		Messages.setWrapText(true);
@@ -132,9 +140,21 @@ public class Main extends Application{
 		console.setPrefWidth(300);
 		console.setStyle("-fx-background-color: black;");
 		console.setEditable(false);
+		console.setWrapText(false);
 		centerfield.setPadding(new Insets(15, 12, 15, 12));
 		centerfield.setSpacing(10);
-		centerfield.getChildren().addAll(Messages, console);
+		Button OpenOptions = new Button("<");
+		OpenOptions.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent arg0) {
+				OptionBoxFlyIn.play();
+			}
+		});
+		OpenOptions.setPrefWidth(100);
+		OpenOptions.setPrefHeight(400);
+		centerfield.getChildren().addAll(OpenOptions, Messages, console);
+
+
 		border.setCenter(centerfield);
 
 		// Right side onlinelist
@@ -272,7 +292,47 @@ public class Main extends Application{
 			}
 		});
 
-		TopBoxes.getChildren().addAll(UsernameRefresh, Username, FontSize, colorPicker, FontChooser);
+		Text MessageSendDelayText = new Text();
+		MessageSendDelayText.setText("Message send\ndelay in ms");
+		MessageSendDelayText.setFont(new Font("Futura", 12));
+		MessageSendDelayText.setFill(Color.RED);
+
+		MessageSendDelayField = new TextField("");
+		MessageSendDelayField.setPromptText("1000 = 1s");
+		MessageSendDelayField.setPrefWidth(115);
+		MessageSendDelayField.textProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> arg0,
+					String arg1, String arg2) {
+				if(!arg2.matches("[Z0-9]+") && !arg2.equals("")){
+					MessageSendDelayField.setText(arg1);
+				}
+			}
+		});
+
+		DontSend = new CheckBox("DONT SEND");
+		DontSend.setFont(new Font("Arial", 8));
+		DontSend.setStyle("-fx-background-color:red;");
+
+		DontSend.selectedProperty().addListener(new ChangeListener<Boolean>() {
+			public void changed(ObservableValue<? extends Boolean> ov,
+					Boolean old_val, Boolean new_val) {
+				if(new_val){
+					border.setStyle("-fx-background-color: RED");
+					Main.AddToConsoleField("[!] Blocking ALL <PENDING> Messages");
+				}else{
+					border.setStyle("-fx-background-image: url('lol.jpg'); -fx-background-position: center center; -fx-background-size: 900 600;");
+					Main.AddToConsoleField("[!] Allowing ALL <PENDING> Messages");
+				}
+			}
+		});
+		border.setStyle("-fx-background-image: url('lol.jpg'); -fx-background-position: center center; -fx-background-size: 900 600;");
+		
+
+
+
+
+		TopBoxes.getChildren().addAll(UsernameRefresh, Username, FontSize, colorPicker, FontChooser, MessageSendDelayText, MessageSendDelayField, DontSend);
 
 		TopBoxes.setSpacing(10);
 		TopBoxes.setPadding(new Insets(15, 12, 0, 12));
@@ -281,10 +341,47 @@ public class Main extends Application{
 
 		border.setTop(TopOrgan);
 
+
+		// Optionswindow
+
+		/*VBox OptionsBox = new VBox();
+		Label ServerCredicals = new Label("Server Credicals");
+		TextField ServerIP = new TextField();
+		TextField ServerPort = new TextField();
+		TextField ServerPassword = new TextField();
+
+		OptionsBox.setLayoutX(-500);
+		OptionsBox.setLayoutY(0);
+
+		OptionsBox.getChildren().addAll(ServerCredicals, ServerIP, ServerPort, ServerPassword);
+		border.getChildren().add(OptionsBox);
+
+		Path path = new Path();
+		path.getElements().add (new MoveTo (-500, 0));
+		path.getElements().add (new LineTo(200, 200));
+		path.setStroke(Color.BLACK);
+		border.getChildren().add(path);
+
+
+		OptionBoxFlyIn.setDuration(Duration.millis(5000));
+		OptionBoxFlyIn.setNode(OptionsBox);
+		OptionBoxFlyIn.setPath(path);
+		OptionBoxFlyIn.setOrientation(OrientationType.ORTHOGONAL_TO_TANGENT);
+		OptionBoxFlyIn.setAutoReverse(true);*/
+
+
+
+
 		// Global
 
 		Scene s = new Scene(border, 900, 500);
-
+		s.setOnKeyPressed(new EventHandler<KeyEvent>() {
+	        public void handle(KeyEvent ke) {
+	            if (ke.getCode() == KeyCode.ESCAPE) {
+	                DontSend.setSelected(true);
+	            }
+	        }
+	    });
 		primaryStage.setScene(s);
 		primaryStage.setTitle("Private Messanger, Todays Topic: Do or Die");
 		primaryStage.show();
@@ -310,7 +407,11 @@ public class Main extends Application{
 		int n = Messages.getText().length();
 		String l = Messages.getText();
 		s = "<PENDING> "+s;
-		l = l.replace(s, s.replace("<PENDING> text ", ""));
+		if(!DontSend.isSelected()){
+			l = l.replace(s, s.replace("<PENDING> text ", ""));
+		}else{
+			l = l.replace(s, s.replace("<PENDING> text ", "<NOT SENT>"));
+		}
 		try{
 			if(l.length() > 600){
 				l = l.substring(l.length()-600, l.length());

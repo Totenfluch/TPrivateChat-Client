@@ -4,7 +4,12 @@ import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.util.Duration;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
@@ -33,7 +38,7 @@ public class Crypter {
 	private static byte[] key6 = {
 
 	};
-	
+
 	public static byte[] thekey = null;
 
 	public static String hashit(String string){
@@ -50,7 +55,7 @@ public class Crypter {
 			return "ERROR";
 		}
 	}
-	
+
 	public static byte[] convertToByteString(String s){
 		byte[] mainkey = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 		int counter = 0;
@@ -132,17 +137,34 @@ public class Crypter {
 			return "Your String is not Encrypted!";
 		}
 	}
-	
+
 	public static boolean doYourThing(String msg){
 		if(thekey != null){
 			msg = encrypt(msg, 0);
-			Client.processMessage(msg);
+			final String x = msg;
+			if(!Main.MessageSendDelayField.getText().equals("")){
+				Timeline aftertick = new Timeline(new KeyFrame(Duration.millis(Integer.valueOf(Main.MessageSendDelayField.getText())), new EventHandler<ActionEvent>() {
+					@Override
+					public void handle(ActionEvent event) {
+						if(!Main.DontSend.isSelected()){
+							Client.processMessage(x);
+						}else{
+							String n = Crypter.decrypt(x, 0);
+							Main.RemoveFromMessageField(n);
+							Main.AddToConsoleField("[!] Prevented |><|" + n + " |><| from beeing sent out.");
+						}
+					}
+				}));
+				aftertick.play();
+			}else{
+				Client.processMessage(msg);
+			}
 			return true;
 		}else{
 			Main.AddToMessageField(".System Message rejected. Use a Key!");
 			return true;
 		}
 	}
-	
-	
+
+
 }
