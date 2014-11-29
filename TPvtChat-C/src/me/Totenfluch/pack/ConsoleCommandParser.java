@@ -5,23 +5,29 @@ import java.util.Hashtable;
 import me.Christian.networking.Client;
 public class ConsoleCommandParser {
 	public static Hashtable<String, String> UserTable = new Hashtable<String, String>();
-	
-	public static String[] Commands = {".help", ".connect <IP> <Port>", ".disconnect", ".admin", ".friend"};
+
+	public static String[] Commands = {".help", ".connect <IP> <Port>", ".channel <Channelname> <ChannelPw>" , ".disconnect", ".admin", ".friend", ".clear"};
 	public static void parse(String[] Args){
 		if(Args[0].equals(".help")){
-				Main.AddToMessageField(".System Available Commands:");
+			Main.AddToMessageField(".System Available Commands:");
 			for(int i = 0; i<Commands.length; i++){
 				Main.AddToMessageField("	" + Commands[i]);
 			}
 			Main.text.setText("");
 		}else if(Args[0].equals(".connect")){
-			if(Main.ConnectToServer(Args[1], Integer.valueOf(Args[2]))){
-				Main.AddToConsoleField("[+] Connected to Server: '"  + Args[1] + ":" + Args[2] + "'");
+			Main.text.clear();
+			if(Args.length > 2){
+				if(Main.ConnectToServer(Args[1], Integer.valueOf(Args[2]))){
+					Main.AddToConsoleField("[+] Connected to Server: '"  + Args[1] + ":" + Args[2] + "'");
+				}else{
+					Main.AddToConsoleField("[-] Failed to Connected to Server: '"  + Args[1] + ":" + Args[2] + "'");
+				}
 			}else{
-				Main.AddToConsoleField("[-] Failed to Connected to Server: '"  + Args[1] + ":" + Args[2] + "'");
+				Main.AddToConsoleField("[-] Invalid Port OR IP");
 			}
 			Main.text.setText("");
 		}else if(Args[0].equals(".disconnect")){
+			Main.text.clear();
 			Main.DisconnectFromServer();
 			Main.text.setText("");
 		}else if(Args[0].equals(".admin")){
@@ -37,6 +43,14 @@ public class ConsoleCommandParser {
 		}else if(Args[0].equals(".kick")){
 			String temp = Main.onlineusers.getSelectionModel().getSelectedItem();
 			Client.processMessage(".kick " + temp);
+		}else if(Args[0].equals(".clear")){
+			Main.text.clear();
+		}else if(Args[0].equals(".channel")){
+			if(Args.length > 1){
+				Main.SwitchChannel(Args[1], "");
+			}else if(Args.length > 2){
+				Main.SwitchChannel(Args[1], Args[2]);
+			}
 		}else{
 			Main.AddToConsoleField("[-] Invalid command");
 		}

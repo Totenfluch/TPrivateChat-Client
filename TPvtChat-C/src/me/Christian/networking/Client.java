@@ -57,12 +57,15 @@ public class Client implements Runnable
 						waitingforreply = false;
 					}catch(Exception e){
 						IsConnectedToServer = false;
+						Main.DisconnectFromServer();
 					}
 				}
 			}
 		}catch( Exception ie ){
 			ie.printStackTrace();
 			IsConnectedToServer = false;
+			running = false;
+			Main.DisconnectFromServer();
 		} finally {
 			try{
 				if(dout != null){

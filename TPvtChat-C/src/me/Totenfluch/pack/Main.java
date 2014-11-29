@@ -12,6 +12,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.PathTransition;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -473,12 +474,24 @@ public class Main extends Application{
 	}
 
 	public static void AddToConsoleField(String s){
-		console.appendText(s+"\n");
+		Platform.runLater(new Runnable() {	
+			@Override
+			public void run() {
+				console.appendText(s+"\n");
+			}
+		});
 	}
 
 
 	public static void DisconnectFromServer(){
 		AddToConsoleField("[-] Disconnected from Server");
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				names.remove(0, names.size());
+			}
+		});
+
 		try {
 			connection.din.close();
 			connection.dout.close();
@@ -561,7 +574,7 @@ public class Main extends Application{
 		});
 	}
 	
-	public void SwitchChannel(String ChannelName, String Password){
+	public static void SwitchChannel(String ChannelName, String Password){
 		Messages.clear();
 		AddToMessageField(".Changing Channel");
 		names.remove(0, names.size());
