@@ -36,6 +36,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -57,7 +58,7 @@ public class Main extends Application{
 	public static TextField text;
 	public static TextArea Messages, console;
 	public static ListView<String> onlineusers;
-	public static TextField Keyfield, Username, MessageSendDelayField;
+	public static TextField Keyfield, Username, MessageSendDelayField, ChannelField, ChannelPasswordField;
 	public static CheckBox DontSend;
 	public static Button Keylock;
 	public static Text KeyAmount;
@@ -196,6 +197,8 @@ public class Main extends Application{
 			}
 		});
 		KeyAmount = new Text("0/128");
+		KeyAmount.setFont(Font.font("Futura", FontWeight.BOLD, 12));
+		KeyAmount.setFill(Color.RED);
 		Keyfield.textProperty().addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue<? extends String> arg0,
@@ -208,8 +211,10 @@ public class Main extends Application{
 				KeyAmount.setText(keyamount+"/128");
 				if(keyamount == 128){
 					Keylock.setDisable(false);
+					KeyAmount.setFill(Color.LIME);
 				}else{
 					Keylock.setDisable(true);
+					KeyAmount.setFill(Color.RED);
 				}
 			}
 		});
@@ -223,14 +228,14 @@ public class Main extends Application{
 		UsernameRefresh.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				if(Username.getText().length() > 2 && !(Username.getText().startsWith(" ") || Username.getText().startsWith("."))){
+				if(Username.getText().length() > 2 && !(Username.getText().startsWith(" ") || Username.getText().startsWith(".") || Username.getText().startsWith("+"))){
 					if(Client.IsConnectedToServer){
 						Client.processMessage(".namechange " + ActiveUsername + " " + Username.getText());
 					}
 					ActiveUsername = Username.getText();
 					AddToConsoleField("[+] Changed Username");
 				}else{
-					AddToConsoleField("[-] Failed to changer Username");
+					AddToConsoleField("[-] Failed to change Username");
 				}
 			}
 		});
@@ -294,8 +299,8 @@ public class Main extends Application{
 
 		Text MessageSendDelayText = new Text();
 		MessageSendDelayText.setText("Message send\ndelay in ms");
-		MessageSendDelayText.setFont(new Font("Futura", 12));
-		MessageSendDelayText.setFill(Color.RED);
+		MessageSendDelayText.setFont(Font.font("Futura", FontWeight.BOLD, 12));
+		MessageSendDelayText.setFill(Color.LIME);
 
 		MessageSendDelayField = new TextField("");
 		MessageSendDelayField.setPromptText("1000 = 1s");
@@ -311,7 +316,8 @@ public class Main extends Application{
 		});
 
 		DontSend = new CheckBox("DONT SEND");
-		DontSend.setFont(new Font("Arial", 8));
+		DontSend.setFont(Font.font("Arial", 7));
+		
 		DontSend.setStyle("-fx-background-color:red;");
 
 		DontSend.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -336,8 +342,36 @@ public class Main extends Application{
 
 		TopBoxes.setSpacing(10);
 		TopBoxes.setPadding(new Insets(15, 12, 0, 12));
-
-		TopOrgan.getChildren().addAll(TopKey, TopBoxes);
+		
+		
+		HBox ChannelBox = new HBox();
+		
+		Button SwitchChannel = new Button("Switch");
+		SwitchChannel.setPrefSize(75, 20);
+		SwitchChannel.setOnAction(new EventHandler<ActionEvent>() {
+     		@Override
+			public void handle(ActionEvent arg0) {
+     			AddToConsoleField("[~] Attempting to switch channel to: '"+ChannelField.getText()+"'");
+     			SwitchChannel(ChannelField.getText(), ChannelPasswordField.getText());
+			}
+		});
+		
+		
+		ChannelField = new TextField();
+		ChannelField.setPrefWidth(359);
+		ChannelField.setPromptText("Channel Name");
+		
+		ChannelPasswordField = new TextField();
+		ChannelPasswordField.setPrefWidth(355);
+		ChannelPasswordField.setPromptText("Channel Password");
+		
+		ChannelBox.setSpacing(10);
+		ChannelBox.setPadding(new Insets(15, 12, 0, 12));
+		ChannelBox.getChildren().addAll(SwitchChannel, ChannelField, ChannelPasswordField);
+		
+		
+		
+		TopOrgan.getChildren().addAll(TopKey, ChannelBox, TopBoxes);
 
 		border.setTop(TopOrgan);
 
@@ -525,5 +559,12 @@ public class Main extends Application{
 				return new ColorRectCell();
 			}
 		});
+	}
+	
+	public void SwitchChannel(String ChannelName, String Password){
+		Messages.clear();
+		AddToMessageField(".Changing Channel");
+		names.remove(0, names.size());
+		Client.processMessage(".channel " + ChannelName + " " + Password);
 	}
 }
