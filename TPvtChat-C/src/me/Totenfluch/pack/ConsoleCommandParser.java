@@ -9,13 +9,13 @@ public class ConsoleCommandParser {
 	public static String[] Commands = {".help", ".connect <IP> <Port>", ".channel <Channelname> <ChannelPw>" , ".disconnect", ".admin", ".friend", ".clear"};
 	public static void parse(String[] Args){
 		if(Args[0].equals(".help")){
-			Main.AddToMessageField(".System Available Commands:");
+			Main.AddToMessageField(".System Available Commands:", true);
 			for(int i = 0; i<Commands.length; i++){
-				Main.AddToMessageField("	" + Commands[i]);
+				Main.AddToMessageField("	" + Commands[i], true);
 			}
 			Main.text.setText("");
 		}else if(Args[0].equals(".connect")){
-			Main.Messages.clear();
+			Main.content.getChildren().clear();
 			if(Args.length > 2){
 				if(Main.ConnectToServer(Args[1], Integer.valueOf(Args[2]))){
 					Main.AddToConsoleField("[+] Connected to Server: '"  + Args[1] + ":" + Args[2] + "'");
@@ -27,7 +27,7 @@ public class ConsoleCommandParser {
 			}
 			Main.text.setText("");
 		}else if(Args[0].equals(".disconnect")){
-			Main.Messages.clear();
+			Main.content.getChildren().clear();
 			Main.DisconnectFromServer();
 			Main.text.setText("");
 		}else if(Args[0].equals(".admin")){
@@ -35,7 +35,7 @@ public class ConsoleCommandParser {
 			Main.text.setText("");
 		}else if(Args[0].equals(".friend")){
 			String temp = Main.onlineusers.getSelectionModel().getSelectedItem();
-			Main.AddToMessageField(".System Added " + temp + " as friend.");
+			Main.AddToMessageField(".System Added " + temp + " as friend.", true);
 			Main.ChangeCellColor(1, temp);
 			UserTable.remove(temp);
 			UserTable.put(temp, "Friend");
@@ -44,7 +44,7 @@ public class ConsoleCommandParser {
 			String temp = Main.onlineusers.getSelectionModel().getSelectedItem();
 			Client.processMessage(".kick " + temp);
 		}else if(Args[0].equals(".clear")){
-			Main.Messages.clear();
+			Main.content.getChildren().clear();
 			Main.text.clear();
 		}else if(Args[0].equals(".channel")){
 			if(Args.length > 1){

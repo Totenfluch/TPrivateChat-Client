@@ -161,7 +161,7 @@ public class Crypter {
 			}
 			return true;
 		}else{
-			Main.AddToMessageField(".System Message rejected. Use a Key!");
+			Main.AddToMessageField(".System Message rejected. Use a Key!", true);
 			return true;
 		}
 	}
