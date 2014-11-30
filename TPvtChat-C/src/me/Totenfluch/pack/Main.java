@@ -30,6 +30,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
@@ -56,6 +57,7 @@ public class Main extends Application{
 	public static String ActiveUsername;
 
 	// GUI Stuff
+	public static Stage primstage;
 	public static TextField text;
 	public static TextArea Messages, console;
 	public static ListView<String> onlineusers;
@@ -85,16 +87,18 @@ public class Main extends Application{
 	}
 
 	public void start(Stage primaryStage) {
+		primstage = primaryStage;
+		Main.primstage.getIcons().add(new Image("blue.png"));
 		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			@Override
 			public void handle(WindowEvent event) {
 				System.exit(0);
 			}
 		});;
-		
+
 
 		BorderPane border = new BorderPane();
-		
+
 		HBox bottomfield = new HBox();
 
 		// BOTTOM
@@ -293,6 +297,7 @@ public class Main extends Application{
 			@Override
 			public void changed(ObservableValue<? extends Number> arg0,
 					Number old_val, Number new_val) {
+				FontChooser.getSelectionModel().select(Integer.valueOf(new_val.toString()));
 				ActiveFont = FontChooser.getSelectionModel().getSelectedItem();
 				Messages.setFont(new Font(ActiveFont, ActiveFontSize));
 			}
@@ -318,7 +323,7 @@ public class Main extends Application{
 
 		DontSend = new CheckBox("DONT SEND");
 		DontSend.setFont(Font.font("Arial", 7));
-		
+
 		DontSend.setStyle("-fx-background-color:red;");
 
 		DontSend.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -334,7 +339,7 @@ public class Main extends Application{
 			}
 		});
 		border.setStyle("-fx-background-image: url('lol.jpg'); -fx-background-position: center center; -fx-background-size: 900 600;");
-		
+
 
 
 
@@ -343,35 +348,35 @@ public class Main extends Application{
 
 		TopBoxes.setSpacing(10);
 		TopBoxes.setPadding(new Insets(15, 12, 0, 12));
-		
-		
+
+
 		HBox ChannelBox = new HBox();
-		
+
 		Button SwitchChannel = new Button("Switch");
 		SwitchChannel.setPrefSize(75, 20);
 		SwitchChannel.setOnAction(new EventHandler<ActionEvent>() {
-     		@Override
+			@Override
 			public void handle(ActionEvent arg0) {
-     			AddToConsoleField("[~] Attempting to switch channel to: '"+ChannelField.getText()+"'");
-     			SwitchChannel(ChannelField.getText(), ChannelPasswordField.getText());
+				AddToConsoleField("[~] Attempting to switch channel to: '"+ChannelField.getText()+"'");
+				SwitchChannel(ChannelField.getText(), ChannelPasswordField.getText());
 			}
 		});
-		
-		
+
+
 		ChannelField = new TextField();
 		ChannelField.setPrefWidth(359);
 		ChannelField.setPromptText("Channel Name");
-		
+
 		ChannelPasswordField = new TextField();
 		ChannelPasswordField.setPrefWidth(355);
 		ChannelPasswordField.setPromptText("Channel Password");
-		
+
 		ChannelBox.setSpacing(10);
 		ChannelBox.setPadding(new Insets(15, 12, 0, 12));
 		ChannelBox.getChildren().addAll(SwitchChannel, ChannelField, ChannelPasswordField);
-		
-		
-		
+
+
+
 		TopOrgan.getChildren().addAll(TopKey, ChannelBox, TopBoxes);
 
 		border.setTop(TopOrgan);
@@ -411,12 +416,24 @@ public class Main extends Application{
 
 		Scene s = new Scene(border, 900, 500);
 		s.setOnKeyPressed(new EventHandler<KeyEvent>() {
-	        public void handle(KeyEvent ke) {
-	            if (ke.getCode() == KeyCode.ESCAPE) {
-	                DontSend.setSelected(true);
-	            }
-	        }
-	    });
+			public void handle(KeyEvent ke) {
+				if (ke.getCode() == KeyCode.ESCAPE) {
+					DontSend.setSelected(true);
+				}
+			}
+		});
+
+
+		primaryStage.focusedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> arg0,
+					Boolean arg1, Boolean arg2) {
+				if(arg2){
+					Main.primstage.getIcons().add(new Image("blue.png"));
+				}
+			}
+		});
+
 		primaryStage.setScene(s);
 		primaryStage.setTitle("Private Messanger, Todays Topic: Do or Die");
 		primaryStage.show();
@@ -573,7 +590,7 @@ public class Main extends Application{
 			}
 		});
 	}
-	
+
 	public static void SwitchChannel(String ChannelName, String Password){
 		Messages.clear();
 		AddToMessageField(".Changing Channel");

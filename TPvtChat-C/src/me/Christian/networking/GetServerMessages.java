@@ -4,6 +4,7 @@ import me.Totenfluch.pack.ConsoleCommandParser;
 import me.Totenfluch.pack.Crypter;
 import me.Totenfluch.pack.Main;
 import javafx.application.Platform;
+import javafx.scene.image.Image;
 
 
 public class GetServerMessages{
@@ -78,6 +79,9 @@ public class GetServerMessages{
 				public void run() {
 					if(!Main.RemoveFromMessageField(nonshit)){
 						Main.AddToMessageField(nonshit.replace("text ", ""));
+						if(!Main.primstage.isFocused()){
+							Main.primstage.getIcons().add(new Image("orange.png"));
+						}
 					}
 				}
 			});

@@ -15,7 +15,7 @@ public class ConsoleCommandParser {
 			}
 			Main.text.setText("");
 		}else if(Args[0].equals(".connect")){
-			Main.text.clear();
+			Main.Messages.clear();
 			if(Args.length > 2){
 				if(Main.ConnectToServer(Args[1], Integer.valueOf(Args[2]))){
 					Main.AddToConsoleField("[+] Connected to Server: '"  + Args[1] + ":" + Args[2] + "'");
@@ -27,7 +27,7 @@ public class ConsoleCommandParser {
 			}
 			Main.text.setText("");
 		}else if(Args[0].equals(".disconnect")){
-			Main.text.clear();
+			Main.Messages.clear();
 			Main.DisconnectFromServer();
 			Main.text.setText("");
 		}else if(Args[0].equals(".admin")){
@@ -44,6 +44,7 @@ public class ConsoleCommandParser {
 			String temp = Main.onlineusers.getSelectionModel().getSelectedItem();
 			Client.processMessage(".kick " + temp);
 		}else if(Args[0].equals(".clear")){
+			Main.Messages.clear();
 			Main.text.clear();
 		}else if(Args[0].equals(".channel")){
 			if(Args.length > 1){
