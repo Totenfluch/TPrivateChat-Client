@@ -495,9 +495,12 @@ public class Main extends Application{
 
 	public static boolean RemoveFromMessageField(String s){
 		s = "<PENDING> "+s;
+		boolean found = false;
+				
 		for(int i=0; i<messagelist.length; i++){
 			if(messagelist[i] != null){
 				if(messagelist[i].getText().equals(s)){
+					found = true;
 					if(!DontSend.isSelected()){
 						messagelist[i].setText(s.replace("<PENDING> text ", ""));
 					}else{
@@ -505,6 +508,9 @@ public class Main extends Application{
 					}
 				}
 			}
+		}
+		if(found){
+			return false;
 		}
 		return true;
 	}

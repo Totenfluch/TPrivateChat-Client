@@ -77,7 +77,7 @@ public class GetServerMessages{
 			Platform.runLater(new Runnable() {
 				@Override
 				public void run() {
-					if(!Main.RemoveFromMessageField(nonshit)){
+					if(Main.RemoveFromMessageField(nonshit)){
 						Main.AddToMessageField(nonshit.replace("text ", ""), false);
 						if(!Main.primstage.isFocused()){
 							Main.primstage.getIcons().add(new Image("orange.png"));
