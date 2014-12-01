@@ -8,9 +8,7 @@ import java.net.UnknownHostException;
 
 import me.Christian.networking.Client;
 import javafx.scene.control.CheckBox;
-import javafx.animation.KeyFrame;
 import javafx.animation.PathTransition;
-import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -47,7 +45,6 @@ import javafx.scene.text.TextBoundsType;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Callback;
-import javafx.util.Duration;
 
 public class Main extends Application{
 	// Server Stuff
@@ -65,6 +62,7 @@ public class Main extends Application{
 	public static TextField text;
 	public static TextArea console;
 	public static ScrollPane messageSP;
+	public static TextField[] messagelist = new TextField[50];
 	public static ListView<String> onlineusers;
 	public static TextField Keyfield, Username, MessageSendDelayField, ChannelField, ChannelPasswordField;
 	public static CheckBox DontSend;
@@ -142,36 +140,36 @@ public class Main extends Application{
 		// Center messages
 
 		HBox centerfield = new HBox();
-		
-		
+
+
 		messageSP = new ScrollPane();
 		messageSP.setPrefWidth(500);
 		messageSP.setPadding(new Insets(0, 2, 2, 10));
 		messageSP.setStyle("-fx-background: transparent");
 		messageSP.setStyle("-fx-background-color:transparent;");
-		
+
 		content = new VBox();
 		content.setPadding(new Insets(5, 5, 5, 10));
 		content.setSpacing(15);
 		content.setAlignment(Pos.TOP_LEFT);
 		content.setPrefWidth(445);
-		
+
 		messageSP.setContent(content);
-		
-		
+
+
 		console = new TextArea();
 		console.setPrefWidth(200);
 		console.setStyle("-fx-background-color: black;");
 		console.setEditable(false);
 		console.setWrapText(false);
-		
+
 		content.heightProperty().addListener(new ChangeListener<Number>() {
 			@Override
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
 				messageSP.setVvalue(messageSP.getVmax());
 			}
 		});
-		
+
 		centerfield.setPadding(new Insets(15, 12, 15, 12));
 		centerfield.setSpacing(10);
 		Button OpenOptions = new Button("<");
@@ -465,7 +463,22 @@ public class Main extends Application{
 	}
 
 	public static void AddToMessageField(String s, boolean own){
-		content.getChildren().add(createBubble(s, own));
+		TextField xn = createBubble(s, own);
+		content.getChildren().add(xn);
+
+		for(int i=messagelist.length-1;i>-1;i--){
+			if(i != messagelist.length-1 && i != 0){
+				messagelist[i+1] = messagelist[i];
+			}
+			if(i == 0){
+				messagelist[1] = messagelist[0];
+				messagelist[0] = xn;
+			}
+			if(i == messagelist.length-1){
+				TextField w = messagelist[messagelist.length-1];
+				content.getChildren().remove(w);
+			}
+		}
 	}
 
 	private String toRgbString(Color c) {
@@ -481,38 +494,19 @@ public class Main extends Application{
 	}
 
 	public static boolean RemoveFromMessageField(String s){
-		int n = Messages.getText().length();
-		String l = Messages.getText();
 		s = "<PENDING> "+s;
-		if(!DontSend.isSelected()){
-			l = l.replace(s, s.replace("<PENDING> text ", ""));
-		}else{
-			l = l.replace(s, s.replace("<PENDING> text ", "<NOT SENT>"));
-		}
-		try{
-			if(l.length() > 600){
-				l = l.substring(l.length()-600, l.length());
+		for(int i=0; i<messagelist.length; i++){
+			if(messagelist[i] != null){
+				if(messagelist[i].getText().equals(s)){
+					if(!DontSend.isSelected()){
+						messagelist[i].setText(s.replace("<PENDING> text ", ""));
+					}else{
+						messagelist[i].setText(s.replace("<PENDING> text ", "<NOT SENT>"));
+					}
+				}
 			}
-			Messages.setText(l);
-		}catch(Exception e){
-			e.printStackTrace();
 		}
-
-		Timeline aftertick = new Timeline(new KeyFrame(Duration.millis(20), new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent event) {
-				Messages.setScrollTop(Double.MAX_VALUE);
-			}
-		}));
-		aftertick.play();
-
-		int na = l.length();
-		if(na == n){
-			return false;
-		}else{
-			return true;
-		}
-
+		return true;
 	}
 
 	public static void AddToConsoleField(String s){
@@ -622,8 +616,8 @@ public class Main extends Application{
 		names.remove(0, names.size());
 		Client.processMessage(".channel " + ChannelName + " " + Password);
 	}
-	
-	
+
+
 	public static TextField createBubble(String txt, Boolean own){
 		TextField textf = new TextField(txt);
 		textf.setEditable(false);
@@ -648,39 +642,39 @@ public class Main extends Application{
 		}else{
 			textf.setPadding(new Insets(10, 10, 10, 10));
 		}
-	
+
 		return textf;
 	}
-	
+
 	static final Text helper;
 	static final double DEFAULT_WRAPPING_WIDTH;
 	static final double DEFAULT_LINE_SPACING;
 	static final String DEFAULT_TEXT;
 	static final TextBoundsType DEFAULT_BOUNDS_TYPE;
 	static {
-	    helper = new Text();
-	    DEFAULT_WRAPPING_WIDTH = helper.getWrappingWidth();
-	    DEFAULT_LINE_SPACING = helper.getLineSpacing();
-	    DEFAULT_TEXT = helper.getText();
-	    DEFAULT_BOUNDS_TYPE = helper.getBoundsType();
+		helper = new Text();
+		DEFAULT_WRAPPING_WIDTH = helper.getWrappingWidth();
+		DEFAULT_LINE_SPACING = helper.getLineSpacing();
+		DEFAULT_TEXT = helper.getText();
+		DEFAULT_BOUNDS_TYPE = helper.getBoundsType();
 	}
 
 	public static double computeTextWidth(Font font, String text, double help0) {
-	    // Toolkit.getToolkit().getFontLoader().computeStringWidth(field.getText(),
-	    // field.getFont());
+		// Toolkit.getToolkit().getFontLoader().computeStringWidth(field.getText(),
+		// field.getFont());
 
-	    helper.setText(text);
-	    helper.setFont(font);
+		helper.setText(text);
+		helper.setFont(font);
 
-	    helper.setWrappingWidth(0.0D);
-	    helper.setLineSpacing(0.0D);
-	    double d = Math.min(helper.prefWidth(-1.0D), help0);
-	    helper.setWrappingWidth((int) Math.ceil(d));
-	    d = Math.ceil(helper.getLayoutBounds().getWidth());
+		helper.setWrappingWidth(0.0D);
+		helper.setLineSpacing(0.0D);
+		double d = Math.min(helper.prefWidth(-1.0D), help0);
+		helper.setWrappingWidth((int) Math.ceil(d));
+		d = Math.ceil(helper.getLayoutBounds().getWidth());
 
-	    helper.setWrappingWidth(DEFAULT_WRAPPING_WIDTH);
-	    helper.setLineSpacing(DEFAULT_LINE_SPACING);
-	    helper.setText(DEFAULT_TEXT);
-	    return d;
+		helper.setWrappingWidth(DEFAULT_WRAPPING_WIDTH);
+		helper.setLineSpacing(DEFAULT_LINE_SPACING);
+		helper.setText(DEFAULT_TEXT);
+		return d;
 	}
 }
