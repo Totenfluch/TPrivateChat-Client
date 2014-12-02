@@ -40,6 +40,7 @@ public class Crypter {
 	};
 
 	public static byte[] thekey = null;
+	public static byte[] the2ndkey = null;
 
 	public static String hashit(String string){
 		MessageDigest messageDigest;
@@ -60,6 +61,16 @@ public class Crypter {
 		byte[] mainkey = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 		int counter = 0;
 		for(int i=0; i<32; i=i+2){
+			mainkey[counter] = (byte)s.charAt(i);
+			counter++;
+		}
+		return mainkey;
+	}
+	
+	public static byte[] convertToByteString2(String s){
+		byte[] mainkey = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+		int counter = 0;
+		for(int i=1; i<32; i=i+2){
 			mainkey[counter] = (byte)s.charAt(i);
 			counter++;
 		}
@@ -107,7 +118,10 @@ public class Crypter {
 				return "ERROR: NO KEY";
 			}
 		}else if(ikey == 1){
-			key = key1;
+			key = the2ndkey;
+			if(the2ndkey == null){
+				return "ERROR: NO KEY2";
+			}
 		}else if(ikey == 2){
 			key = key2;
 		}else if(ikey == 3){
@@ -140,7 +154,7 @@ public class Crypter {
 
 	public static boolean doYourThing(String msg){
 		if(thekey != null){
-			msg = encrypt(msg, 0);
+			msg = encrypt(encrypt(msg, 0), 1);
 			final String x = msg;
 			if(!Main.MessageSendDelayField.getText().equals("")){
 				Timeline aftertick = new Timeline(new KeyFrame(Duration.millis(Integer.valueOf(Main.MessageSendDelayField.getText())), new EventHandler<ActionEvent>() {
@@ -149,7 +163,7 @@ public class Crypter {
 						if(!Main.DontSend.isSelected()){
 							Client.processMessage(x);
 						}else{
-							String n = Crypter.decrypt(x, 0);
+							String n = Crypter.decrypt(Crypter.decrypt(x, 0), 1);
 							Main.RemoveFromMessageField(n);
 							Main.AddToConsoleField("[!] Prevented |><|" + n + " |><| from beeing sent out.");
 						}

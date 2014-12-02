@@ -73,7 +73,7 @@ public class GetServerMessages{
 		}else if(Args[0].equals(".confirmAdmin")){
 			Main.ActiveUsername = "."+Main.ActiveUsername;
 		}else if(Crypter.decrypt(FullMsg, 0).startsWith("text")){
-			String nonshit = Crypter.decrypt(FullMsg, 0);
+			String nonshit = Crypter.decrypt(Crypter.decrypt(FullMsg, 0), 1);
 			Platform.runLater(new Runnable() {
 				@Override
 				public void run() {

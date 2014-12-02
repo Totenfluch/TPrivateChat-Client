@@ -218,6 +218,7 @@ public class Main extends Application{
 					Keyfield.setDisable(true);
 					AddToConsoleField("[+] Using new Key.");
 					Crypter.thekey = Crypter.convertToByteString(Crypter.hashit(Keyfield.getText()));
+					Crypter.the2ndkey = Crypter.convertToByteString(Crypter.hashit(Keyfield.getText()));
 				}else{
 					Keylock.setText("Lock");
 					Keyfield.setDisable(false);
