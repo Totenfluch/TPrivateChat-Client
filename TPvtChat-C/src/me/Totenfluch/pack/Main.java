@@ -365,9 +365,6 @@ public class Main extends Application{
 		border.setStyle("-fx-background-image: url('lol.jpg'); -fx-background-position: center center; -fx-background-size: 900 600;");
 
 
-
-
-
 		TopBoxes.getChildren().addAll(UsernameRefresh, Username, FontSize, colorPicker, FontChooser, MessageSendDelayText, MessageSendDelayField, DontSend);
 
 		TopBoxes.setSpacing(10);
@@ -404,36 +401,6 @@ public class Main extends Application{
 		TopOrgan.getChildren().addAll(TopKey, ChannelBox, TopBoxes);
 
 		border.setTop(TopOrgan);
-
-
-		// Optionswindow
-
-		/*VBox OptionsBox = new VBox();
-		Label ServerCredicals = new Label("Server Credicals");
-		TextField ServerIP = new TextField();
-		TextField ServerPort = new TextField();
-		TextField ServerPassword = new TextField();
-
-		OptionsBox.setLayoutX(-500);
-		OptionsBox.setLayoutY(0);
-
-		OptionsBox.getChildren().addAll(ServerCredicals, ServerIP, ServerPort, ServerPassword);
-		border.getChildren().add(OptionsBox);
-
-		Path path = new Path();
-		path.getElements().add (new MoveTo (-500, 0));
-		path.getElements().add (new LineTo(200, 200));
-		path.setStroke(Color.BLACK);
-		border.getChildren().add(path);
-
-
-		OptionBoxFlyIn.setDuration(Duration.millis(5000));
-		OptionBoxFlyIn.setNode(OptionsBox);
-		OptionBoxFlyIn.setPath(path);
-		OptionBoxFlyIn.setOrientation(OrientationType.ORTHOGONAL_TO_TANGENT);
-		OptionBoxFlyIn.setAutoReverse(true);*/
-
-
 
 
 		// Global
@@ -667,8 +634,6 @@ public class Main extends Application{
 	}
 
 	public static double computeTextWidth(Font font, String text, double help0) {
-		// Toolkit.getToolkit().getFontLoader().computeStringWidth(field.getText(),
-		// field.getFont());
 
 		helper.setText(text);
 		helper.setFont(font);

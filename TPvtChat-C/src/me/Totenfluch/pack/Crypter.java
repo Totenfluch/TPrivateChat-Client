@@ -20,25 +20,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
 
 public class Crypter {
-	private static byte[] key1 = {
-
-	};
-	private static byte[] key2 = {
-
-	};
-	private static byte[] key3 = {
-
-	};
-	private static byte[] key4 = {
-
-	};
-	private static byte[] key5 = {
-
-	};
-	private static byte[] key6 = {
-
-	};
-
 	public static byte[] thekey = null;
 	public static byte[] the2ndkey = null;
 
@@ -85,17 +66,10 @@ public class Crypter {
 				return "ERROR: NO KEY";
 			}
 		}else if(ikey == 1){
-			key = key1;
-		}else if(ikey == 2){
-			key = key2;
-		}else if(ikey == 3){
-			key = key3;
-		}else if(ikey == 4){
-			key = key4;
-		}else if(ikey == 5){
-			key = key5;
-		}else if(ikey == 6){
-			key = key6;
+			key = the2ndkey;
+			if(the2ndkey == null){
+				return "ERROR: NO KEY2";
+			}
 		}else{
 			return "Invalid Key";
 		}
@@ -122,16 +96,6 @@ public class Crypter {
 			if(the2ndkey == null){
 				return "ERROR: NO KEY2";
 			}
-		}else if(ikey == 2){
-			key = key2;
-		}else if(ikey == 3){
-			key = key3;
-		}else if(ikey == 4){
-			key = key4;
-		}else if(ikey == 5){
-			key = key5;
-		}else if(ikey == 6){
-			key = key6;
 		}else{
 			return "Invalid Key";
 		}
