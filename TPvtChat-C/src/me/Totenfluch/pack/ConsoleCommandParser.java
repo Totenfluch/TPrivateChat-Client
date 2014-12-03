@@ -52,6 +52,21 @@ public class ConsoleCommandParser {
 			}else if(Args.length > 2){
 				Main.SwitchChannel(Args[1], Args[2]);
 			}
+		}else if(Args[0].equals(".toggle")){
+			if(Args[1].equals("console")){
+				if(Main.console.getParent() != null){
+					Main.centerfield.getChildren().remove(Main.console);
+					Main.messageSP.setPrefWidth(690);
+					Main.content.setPrefWidth(635);
+					Main.OpenOptions.setText("<");
+				}else{
+					Main.centerfield.getChildren().add(Main.console);
+					Main.messageSP.setPrefWidth(500);
+					Main.content.setPrefWidth(445);
+					Main.OpenOptions.setText(">");
+				}
+				Main.text.setText("");
+			}
 		}else{
 			Main.AddToConsoleField("[-] Invalid command");
 		}

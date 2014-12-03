@@ -70,7 +70,9 @@ public class Main extends Application{
 	public static Text KeyAmount;
 	public String ActiveFont = "Futura";
 	public int ActiveFontSize = 20;
+	public static Button OpenOptions;
 	public static VBox content;
+	public static HBox centerfield;
 	public static final ObservableList<String> names = 
 			FXCollections.observableArrayList();
 
@@ -139,14 +141,15 @@ public class Main extends Application{
 
 		// Center messages
 
-		HBox centerfield = new HBox();
-
+		centerfield = new HBox();
+		centerfield.setAlignment(Pos.CENTER);
 
 		messageSP = new ScrollPane();
 		messageSP.setPrefWidth(500);
 		messageSP.setPadding(new Insets(0, 2, 2, 10));
 		messageSP.setStyle("-fx-background: transparent");
 		messageSP.setStyle("-fx-background-color:transparent;");
+		messageSP.setStyle("-fx-background: white;");
 
 		content = new VBox();
 		content.setPadding(new Insets(5, 5, 5, 10));
@@ -172,11 +175,12 @@ public class Main extends Application{
 
 		centerfield.setPadding(new Insets(15, 12, 15, 12));
 		centerfield.setSpacing(10);
-		Button OpenOptions = new Button("<");
+		OpenOptions = new Button(">");
 		OpenOptions.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				OptionBoxFlyIn.play();
+				String[] xn = {".toggle", "console"};
+				ConsoleCommandParser.parse(xn);
 			}
 		});
 		OpenOptions.setPrefWidth(50);
@@ -596,10 +600,10 @@ public class Main extends Application{
 		TextField textf = new TextField(txt);
 		textf.setEditable(false);
 		if(own){
-			textf.setStyle("-fx-border-color: Green;");
+			textf.setStyle("-fx-border-color: Green; -fx-border-width: 2px ;");
 			textf.setAlignment(Pos.BASELINE_LEFT);
 		}else{
-			textf.setStyle("-fx-border-color: Brown;");	
+			textf.setStyle("-fx-border-color: Brown; -fx-border-width: 2px ;");	
 			textf.setAlignment(Pos.BASELINE_RIGHT);
 		}
 		textf.setPrefWidth(computeTextWidth(textf.getFont(),
