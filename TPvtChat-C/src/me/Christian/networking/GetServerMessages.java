@@ -18,7 +18,7 @@ public class GetServerMessages{
 			Platform.runLater(new Runnable() {
 				@Override
 				public void run() {
-					Main.AddToMessageField(FullMsg, false);
+					Main.AddToMessageField(FullMsg, 2);
 				}
 			});
 		}else if(Args[0].equals(".connect")){
@@ -32,7 +32,10 @@ public class GetServerMessages{
 						ConsoleCommandParser.UserTable.put(Args[1], "User");
 					}
 					//Main.ChangeCellColor(0, "x");
-					Main.AddToMessageField(".System " + Args[1] + " connected.", false);
+					Main.AddToMessageField(".System " + Args[1] + " connected.", 1);
+					if(!Main.primstage.isFocused()){
+						Main.primstage.getIcons().add(new Image("orange.png"));
+					}
 				}
 			});
 		}else if(Args[0].equals(".disconnect")){
@@ -46,7 +49,7 @@ public class GetServerMessages{
 						ConsoleCommandParser.UserTable.remove(Args[1]);
 					}
 					//Main.ChangeCellColor(0, "x");
-					Main.AddToMessageField(".System " + Args[1] + " disconnected.", false);
+					Main.AddToMessageField(".System " + Args[1] + " disconnected.", 1);
 				}
 			});
 		}else if(Args[0].equals(".namechange")){
@@ -67,7 +70,7 @@ public class GetServerMessages{
 						ConsoleCommandParser.UserTable.put(Args[2], "User");
 					}
 					//Main.ChangeCellColor(0, "x");
-					Main.AddToMessageField(".System " + Args[1] + " changed name to " + Args[2] + ".", false);
+					Main.AddToMessageField(".System " + Args[1] + " changed name to " + Args[2] + ".", 1);
 				}
 			});
 		}else if(Args[0].equals(".confirmAdmin")){
@@ -78,7 +81,7 @@ public class GetServerMessages{
 				@Override
 				public void run() {
 					if(Main.RemoveFromMessageField(nonshit)){
-						Main.AddToMessageField(nonshit.replace("text ", ""), false);
+						Main.AddToMessageField(nonshit.replace("text ", ""), 1);
 						if(!Main.primstage.isFocused()){
 							Main.primstage.getIcons().add(new Image("orange.png"));
 						}

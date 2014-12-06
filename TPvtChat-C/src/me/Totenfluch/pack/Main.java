@@ -8,7 +8,9 @@ import java.net.UnknownHostException;
 
 import me.Christian.networking.Client;
 import javafx.scene.control.CheckBox;
+import javafx.animation.KeyFrame;
 import javafx.animation.PathTransition;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -21,16 +23,11 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ColorPicker;
-import javafx.scene.control.Labeled;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Slider;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -45,6 +42,7 @@ import javafx.scene.text.TextBoundsType;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Callback;
+import javafx.util.Duration;
 
 public class Main extends Application{
 	// Server Stuff
@@ -110,6 +108,7 @@ public class Main extends Application{
 		// BOTTOM
 		text = new TextField("");
 		text.setPrefSize(900, 20);
+		text.setFont(Font.font("Futura", 13));
 		text.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent e) {
 				String Text = text.getText();
@@ -118,14 +117,45 @@ public class Main extends Application{
 					ConsoleCommandParser.parse(Args);
 				}else{ 
 					if(!(Text.equals(" ") || Text.equals(""))){
-						if(Client.IsConnectedToServer){
+						if(!MessageSendDelayField.getText().equals("")){
+							if(Integer.valueOf(MessageSendDelayField.getText()) > 0){
+								if(Client.IsConnectedToServer){
+									final int wn = Integer.valueOf(MessageSendDelayField.getText());
+									final TextField xp = AddToMessageField("<"+wn+"> ["+Main.ActiveUsername+"]-> " + Text , 0);
+									final String ourtext = "["+Main.ActiveUsername+"]-> " + Text;
+									Timeline aftertickz = new Timeline(new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
+										@Override
+										public void handle(ActionEvent arg0) {
+											int pn = Integer.valueOf(xp.getText().split("<")[1].split(">")[0]);
+											if(pn > 0){
+												pn--;
+												xp.setText("<"+pn+">"+ourtext);
+											}else{
+												xp.setText("<PENDING> text " + ourtext);
+												if(Client.IsConnectedToServer){
+													Crypter.doYourThing("text "+ ourtext);
+												}else{
+													xp.setText("<Local> "+ourtext);
+												}
+											}
+										}
+									}));
+									aftertickz.setCycleCount(wn+1);
+									aftertickz.play();
+									text.setText("");
+								}else{
+									AddToMessageField("<Local> [" + ActiveUsername + "]->" + Text, 0);
+									text.setText("");
+								}
+							}
+						}else if(Client.IsConnectedToServer){
 							String ta = "text ["+ Main.ActiveUsername + "]-> ";
 							Text = ta + Text;
-							AddToMessageField("<PENDING> " + Text, true);
+							AddToMessageField("<PENDING> " + Text, 0);
 							Crypter.doYourThing(Text);
 							text.setText("");
 						}else{
-							AddToMessageField("[Local] " + Text, true);
+							AddToMessageField("<Local> [" + ActiveUsername + "]->" + Text, 0);
 							text.setText("");
 						}
 					}
@@ -145,7 +175,7 @@ public class Main extends Application{
 		centerfield.setAlignment(Pos.CENTER);
 
 		messageSP = new ScrollPane();
-		messageSP.setPrefWidth(500);
+		messageSP.setPrefWidth(690);
 		messageSP.setPadding(new Insets(0, 2, 2, 10));
 		messageSP.setStyle("-fx-background: transparent");
 		messageSP.setStyle("-fx-background-color:transparent;");
@@ -155,7 +185,7 @@ public class Main extends Application{
 		content.setPadding(new Insets(5, 5, 5, 10));
 		content.setSpacing(15);
 		content.setAlignment(Pos.TOP_LEFT);
-		content.setPrefWidth(445);
+		content.setPrefWidth(635);
 
 		messageSP.setContent(content);
 
@@ -175,7 +205,7 @@ public class Main extends Application{
 
 		centerfield.setPadding(new Insets(15, 12, 15, 12));
 		centerfield.setSpacing(10);
-		OpenOptions = new Button(">");
+		OpenOptions = new Button("<");
 		OpenOptions.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -185,7 +215,7 @@ public class Main extends Application{
 		});
 		OpenOptions.setPrefWidth(50);
 		OpenOptions.setPrefHeight(400);
-		centerfield.getChildren().addAll(OpenOptions, messageSP, console);
+		centerfield.getChildren().addAll(OpenOptions, messageSP);
 
 
 		border.setCenter(centerfield);
@@ -285,59 +315,13 @@ public class Main extends Application{
 			}
 		});
 
-		Slider FontSize = new Slider();
-		FontSize.setMin(0);
-		FontSize.setMax(40);
-		FontSize.setValue(20);
-		FontSize.setShowTickLabels(true);
-		FontSize.setShowTickMarks(true);
-		FontSize.setMajorTickUnit(10);
-		FontSize.setMinorTickCount(1);
-		FontSize.setBlockIncrement(5);
-		FontSize.setTooltip(new Tooltip("Font Size"));
-		FontSize.valueProperty().addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> arg0,
-					Number old_val, Number new_val) {
-				ActiveFontSize = Integer.valueOf((int) Math.floor(Double.valueOf(new_val.toString())));
-				if(ActiveFontSize == 0){
-					ActiveFontSize = 1;
-				}
-				((Labeled) content.getChildren()).setFont(new Font(ActiveFont, ActiveFontSize));
-			}
-		});
-
-		final ColorPicker colorPicker = new ColorPicker();
-		colorPicker.setValue(Color.BLACK);
-
-		colorPicker.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent arg0) {
-				content.setStyle("-fx-background-color: Purple; -fx-text-fill: "+ toRgbString(colorPicker.getValue()) + ";");
-			}
-		});
-
-		ChoiceBox<String> FontChooser = new ChoiceBox<String>();
-		FontChooser.setItems(FXCollections.observableArrayList("Futura", "Arial", "Calibri", "Serif", "Courier New"));
-		FontChooser.setTooltip(new Tooltip("Select your favourite font"));
-		FontChooser.getSelectionModel().select(0);
-		FontChooser.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> arg0,
-					Number old_val, Number new_val) {
-				FontChooser.getSelectionModel().select(Integer.valueOf(new_val.toString()));
-				ActiveFont = FontChooser.getSelectionModel().getSelectedItem();
-				((Labeled) content.getChildren()).setFont(new Font(ActiveFont, ActiveFontSize));
-			}
-		});
-
 		Text MessageSendDelayText = new Text();
-		MessageSendDelayText.setText("Message send\ndelay in ms");
+		MessageSendDelayText.setText("Message send\ndelay in s");
 		MessageSendDelayText.setFont(Font.font("Futura", FontWeight.BOLD, 12));
 		MessageSendDelayText.setFill(Color.LIME);
 
 		MessageSendDelayField = new TextField("");
-		MessageSendDelayField.setPromptText("1000 = 1s");
+		MessageSendDelayField.setPromptText("(1-10^6) | 5 = 5s");
 		MessageSendDelayField.setPrefWidth(115);
 		MessageSendDelayField.textProperty().addListener(new ChangeListener<String>() {
 			@Override
@@ -346,30 +330,35 @@ public class Main extends Application{
 				if(!arg2.matches("[Z0-9]+") && !arg2.equals("")){
 					MessageSendDelayField.setText(arg1);
 				}
+				if(arg2.length() > 7){
+					MessageSendDelayField.setText(arg1);
+				}
 			}
 		});
 
 		DontSend = new CheckBox("DONT SEND");
-		DontSend.setFont(Font.font("Arial", 7));
+		DontSend.setFont(Font.font("Futura", FontWeight.BOLD, 9));
 
-		DontSend.setStyle("-fx-background-color:red;");
+		DontSend.setStyle("-fx-text-fill:red;");
 
 		DontSend.selectedProperty().addListener(new ChangeListener<Boolean>() {
 			public void changed(ObservableValue<? extends Boolean> ov,
 					Boolean old_val, Boolean new_val) {
 				if(new_val){
 					border.setStyle("-fx-background-color: RED");
+					DontSend.setStyle("-fx-text-fill: black");
 					Main.AddToConsoleField("[!] Blocking ALL <PENDING> Messages");
 				}else{
 					border.setStyle("-fx-background-image: url('lol.jpg'); -fx-background-position: center center; -fx-background-size: 900 600;");
 					Main.AddToConsoleField("[!] Allowing ALL <PENDING> Messages");
+					DontSend.setStyle("-fx-text-fill: red");
 				}
 			}
 		});
 		border.setStyle("-fx-background-image: url('lol.jpg'); -fx-background-position: center center; -fx-background-size: 900 600;");
 
 
-		TopBoxes.getChildren().addAll(UsernameRefresh, Username, FontSize, colorPicker, FontChooser, MessageSendDelayText, MessageSendDelayField, DontSend);
+		TopBoxes.getChildren().addAll(UsernameRefresh, Username, /*FontSize, colorPicker, FontChooser,*/ MessageSendDelayText, MessageSendDelayField, DontSend);
 
 		TopBoxes.setSpacing(10);
 		TopBoxes.setPadding(new Insets(15, 12, 0, 12));
@@ -429,13 +418,17 @@ public class Main extends Application{
 			}
 		});
 
+
+		AddToMessageField("TPvtChat-C Alpha | Type .help for informations", 2);
+
+
 		primaryStage.setScene(s);
 		primaryStage.setTitle("Private Messanger, Todays Topic: Do or Die");
 		primaryStage.show();
 	}
 
-	public static void AddToMessageField(String s, boolean own){
-		TextField xn = createBubble(s, own);
+	public static TextField AddToMessageField(String s, int owner){
+		TextField xn = createBubble(s, owner);
 		content.getChildren().add(xn);
 
 		for(int i=messagelist.length-1;i>-1;i--){
@@ -451,8 +444,11 @@ public class Main extends Application{
 				content.getChildren().remove(w);
 			}
 		}
+
+		return xn;
 	}
 
+	@SuppressWarnings("unused")
 	private String toRgbString(Color c) {
 		return "rgb("
 				+ to255Int(c.getRed())
@@ -468,7 +464,7 @@ public class Main extends Application{
 	public static boolean RemoveFromMessageField(String s){
 		s = "<PENDING> "+s;
 		boolean found = false;
-				
+
 		for(int i=0; i<messagelist.length; i++){
 			if(messagelist[i] != null){
 				if(messagelist[i].getText().equals(s)){
@@ -590,21 +586,24 @@ public class Main extends Application{
 
 	public static void SwitchChannel(String ChannelName, String Password){
 		content.getChildren().clear();
-		AddToMessageField(".Changing Channel", true);
+		AddToMessageField(".Changing Channel", 0);
 		names.remove(0, names.size());
 		Client.processMessage(".channel " + ChannelName + " " + Password);
 	}
 
 
-	public static TextField createBubble(String txt, Boolean own){
+	public static TextField createBubble(String txt, int owner){
 		TextField textf = new TextField(txt);
 		textf.setEditable(false);
-		if(own){
+		if(owner == 0){
 			textf.setStyle("-fx-border-color: Green; -fx-border-width: 2px ;");
 			textf.setAlignment(Pos.BASELINE_LEFT);
-		}else{
+		}else if(owner == 1){
 			textf.setStyle("-fx-border-color: Brown; -fx-border-width: 2px ;");	
 			textf.setAlignment(Pos.BASELINE_RIGHT);
+		}else if(owner == 2){
+			textf.setStyle("-fx-border-color: Brown; -fx-border-width: 2px ;");	
+			textf.setAlignment(Pos.BASELINE_CENTER);
 		}
 		textf.setPrefWidth(computeTextWidth(textf.getFont(),
 				textf.getText(), 0.0D) + 10);
