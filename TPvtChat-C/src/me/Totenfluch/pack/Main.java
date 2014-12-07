@@ -165,6 +165,7 @@ public class Main extends Application{
 
 		bottomfield.setPadding(new Insets(15, 12, 15, 12));
 		bottomfield.setSpacing(10);
+		bottomfield.setAlignment(Pos.CENTER);
 
 		bottomfield.getChildren().add(text);
 		border.setBottom(bottomfield);
@@ -205,6 +206,9 @@ public class Main extends Application{
 
 		centerfield.setPadding(new Insets(15, 12, 15, 12));
 		centerfield.setSpacing(10);
+		
+		VBox ButtonLeft = new VBox();
+		
 		OpenOptions = new Button("<");
 		OpenOptions.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -213,9 +217,14 @@ public class Main extends Application{
 				ConsoleCommandParser.parse(xn);
 			}
 		});
-		OpenOptions.setPrefWidth(50);
-		OpenOptions.setPrefHeight(400);
-		centerfield.getChildren().addAll(OpenOptions, messageSP);
+		OpenOptions.setPrefHeight(1920);
+		ButtonLeft.setPadding(new Insets(15, 0, 12, 12));
+		
+		ButtonLeft.getChildren().add(OpenOptions);
+		
+		border.setLeft(ButtonLeft);
+		
+		centerfield.getChildren().add(messageSP);
 
 
 		border.setCenter(centerfield);
@@ -291,14 +300,32 @@ public class Main extends Application{
 		UsernameRefresh.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				if(Username.getText().length() > 2 && !(Username.getText().startsWith(" ") || Username.getText().startsWith(".") || Username.getText().startsWith("+"))){
+				if(Username.getText().length() > 2 && !(Username.getText().contains(" ") || Username.getText().contains(".") || Username.getText().contains("+"))){
 					if(Client.IsConnectedToServer){
 						Client.processMessage(".namechange " + ActiveUsername + " " + Username.getText());
 					}
 					ActiveUsername = Username.getText();
+					Username.setStyle("-fx-border-color: green; -fx-border-width: 2px ; -fx-text-fill: green");
+					Timeline aftertickz = new Timeline(new KeyFrame(Duration.millis(500), new EventHandler<ActionEvent>() {
+						@Override
+						public void handle(ActionEvent arg0) {
+							Username.setStyle("");
+						}
+					}));
+					aftertickz.play();
 					AddToConsoleField("[+] Changed Username");
 				}else{
 					AddToConsoleField("[-] Failed to change Username");
+					Username.setStyle("-fx-border-color: red; -fx-border-width: 2px ; -fx-text-fill: red");
+					Timeline aftertickz = new Timeline(new KeyFrame(Duration.millis(500), new EventHandler<ActionEvent>() {
+						@Override
+						public void handle(ActionEvent arg0) {
+							Username.setStyle("");
+						}
+					}));
+					aftertickz.play();
+					
+					Username.setText(Main.ActiveUsername);
 				}
 			}
 		});
