@@ -35,14 +35,14 @@ public class Client implements Runnable
 	}
 
 
-	public static void processMessage( String message ) {
+	public static boolean processMessage( String message ) {
 			try {
 				Main.connection.dout.writeUTF( message );
+				return true;
 			} catch( Exception ie ){
-				ie.printStackTrace();
-				System.out.println( ie ); 
+				Main.AddToMessageField("Command rejected - no server connection", 2);
+				return false;
 			}
-		
 	}
 
 	public void run() {

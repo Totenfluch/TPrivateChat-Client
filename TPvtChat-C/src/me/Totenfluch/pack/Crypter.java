@@ -20,10 +20,12 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
 
 public class Crypter {
-	public static byte[] thekey = null;
-	public static byte[] the2ndkey = null;
+	private static byte[] thekey = null;
+	private static byte[] the2ndkey = null;
+	private static byte[] the3rdkey = null;
+	private static byte[] the4thkey = null;
 
-	public static String hashit(String string){
+	private static String hashit(String string){
 		MessageDigest messageDigest;
 		try {
 			messageDigest = MessageDigest.getInstance("MD5");
@@ -38,7 +40,7 @@ public class Crypter {
 		}
 	}
 
-	public static byte[] convertToByteString(String s){
+	private static byte[] convertToByteString(String s){
 		byte[] mainkey = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 		int counter = 0;
 		for(int i=0; i<32; i=i+2){
@@ -48,7 +50,7 @@ public class Crypter {
 		return mainkey;
 	}
 	
-	public static byte[] convertToByteString2(String s){
+	private static byte[] convertToByteString2(String s){
 		byte[] mainkey = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 		int counter = 0;
 		for(int i=1; i<32; i=i+2){
@@ -57,8 +59,15 @@ public class Crypter {
 		}
 		return mainkey;
 	}
+	
+	public static void createKeys(){
+		thekey = Crypter.convertToByteString(hashit(Main.Keyfield.getText()));
+		the2ndkey = Crypter.convertToByteString2(hashit(Main.Keyfield.getText()));
+		the3rdkey = Crypter.convertToByteString(hashit(Main.Keyfield.getText().toLowerCase().substring(32, 96)));
+		the4thkey = Crypter.convertToByteString2(hashit(Main.Keyfield.getText().toUpperCase().substring(16, 72)));
+	}
 
-	public static String encrypt(String strToEncrypt, int ikey){
+	private static String encrypt(String strToEncrypt, int ikey){
 		byte[] key = null;
 		if(ikey == 0){
 			key = thekey;
@@ -69,6 +78,16 @@ public class Crypter {
 			key = the2ndkey;
 			if(the2ndkey == null){
 				return "ERROR: NO KEY2";
+			}
+		}else if(ikey == 2){
+			key = the3rdkey;
+			if(the3rdkey == null){
+				return "ERROR: NO KEY3";
+			}
+		}else if(ikey == 3){
+			key = the4thkey;
+			if(the4thkey == null){
+				return "ERROR: NO KEY4";
 			}
 		}else{
 			return "Invalid Key";
@@ -96,6 +115,16 @@ public class Crypter {
 			if(the2ndkey == null){
 				return "ERROR: NO KEY2";
 			}
+		}else if(ikey == 2){
+			key = the3rdkey;
+			if(the3rdkey == null){
+				return "ERROR: NO KEY3";
+			}
+		}else if(ikey == 3){
+			key = the4thkey;
+			if(the4thkey == null){
+				return "ERROR: NO KEY4";
+			}
 		}else{
 			return "Invalid Key";
 		}
@@ -112,13 +141,13 @@ public class Crypter {
 					Main.AddToConsoleField("[~] Wrong Key.");	
 				}
 			});
-			return "Your String is not Encrypted!";
+			return "Your String is not Encrypted!"+ikey;
 		}
 	}
 
 	public static boolean doYourThing(String msg){
-		if(thekey != null){
-			msg = encrypt(encrypt(msg, 0), 1);
+		if(thekey != null && the2ndkey != null && the3rdkey != null && the4thkey != null){
+			msg = encrypt(encrypt(encrypt(encrypt(msg, 3), 2), 1), 0);
 			final String x = msg;
 			if(!Main.MessageSendDelayField.getText().equals("")){
 				Timeline aftertick = new Timeline(new KeyFrame(Duration.millis(Integer.valueOf(Main.MessageSendDelayField.getText())), new EventHandler<ActionEvent>() {
@@ -127,7 +156,7 @@ public class Crypter {
 						if(!Main.DontSend.isSelected()){
 							Client.processMessage(x);
 						}else{
-							String n = Crypter.decrypt(Crypter.decrypt(x, 0), 1);
+							String n = decrypt(decrypt(decrypt(decrypt(x, 0), 1), 2), 3);
 							Main.RemoveFromMessageField(n);
 							Main.AddToConsoleField("[!] Prevented |><|" + n + " |><| from beeing sent out.");
 						}

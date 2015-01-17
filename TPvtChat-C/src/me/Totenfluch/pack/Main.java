@@ -184,7 +184,7 @@ public class Main extends Application{
 
 		content = new VBox();
 		content.setPadding(new Insets(5, 5, 5, 10));
-		content.setSpacing(15);
+		content.setSpacing(5);
 		content.setAlignment(Pos.TOP_LEFT);
 		content.setPrefWidth(635);
 
@@ -260,8 +260,7 @@ public class Main extends Application{
 					Keylock.setText("Unlock");
 					Keyfield.setDisable(true);
 					AddToConsoleField("[+] Using new Key.");
-					Crypter.thekey = Crypter.convertToByteString(Crypter.hashit(Keyfield.getText()));
-					Crypter.the2ndkey = Crypter.convertToByteString(Crypter.hashit(Keyfield.getText()));
+					Crypter.createKeys();
 				}else{
 					Keylock.setText("Lock");
 					Keyfield.setDisable(false);
@@ -430,6 +429,12 @@ public class Main extends Application{
 			public void handle(KeyEvent ke) {
 				if (ke.getCode() == KeyCode.ESCAPE) {
 					DontSend.setSelected(true);
+				}else if(ke.getCode() == KeyCode.ALT_GRAPH){
+					String[] xn = {".c"};
+					ConsoleCommandParser.parse(xn);
+				}else if(ke.getCode() == KeyCode.CONTROL){
+					String[] xn = {".ACA"};
+					ConsoleCommandParser.parse(xn);
 				}
 			}
 		});
@@ -446,7 +451,8 @@ public class Main extends Application{
 		});
 
 
-		AddToMessageField("TPvtChat-C Alpha | Type .help for informations", 2);
+		AddToMessageField("TPvtChat-C Beta | Type .help for informations", 2);
+		AddToMessageField("CTRL Clear all user's chat, ALT GR clear yours", 2);
 
 
 		primaryStage.setScene(s);

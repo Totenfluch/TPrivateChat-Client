@@ -75,19 +75,30 @@ public class GetServerMessages{
 			});
 		}else if(Args[0].equals(".confirmAdmin")){
 			Main.ActiveUsername = "."+Main.ActiveUsername;
-		}else if(Crypter.decrypt(Crypter.decrypt(FullMsg, 0), 1).startsWith("text")){
-			String nonshit = Crypter.decrypt(Crypter.decrypt(FullMsg, 0), 1);
+		}else if(Args[0].equals(".ACA")){
 			Platform.runLater(new Runnable() {
 				@Override
 				public void run() {
-					if(Main.RemoveFromMessageField(nonshit)){
-						Main.AddToMessageField(nonshit.replace("text ", ""), 1);
+					Main.console.setText("");
+					Main.content.getChildren().clear();
+					Main.text.clear();
+				}
+			});
+		}else if(Crypter.decrypt(Crypter.decrypt(Crypter.decrypt(Crypter.decrypt(FullMsg, 0), 1), 2), 3).startsWith("text")){
+			String entrymsg = Crypter.decrypt(Crypter.decrypt(Crypter.decrypt(Crypter.decrypt(FullMsg, 0), 1), 2), 3);
+			Platform.runLater(new Runnable() {
+				@Override
+				public void run() {
+					if(Main.RemoveFromMessageField(entrymsg)){
+						Main.AddToMessageField(entrymsg.replace("text ", ""), 1);
 						if(!Main.primstage.isFocused()){
 							Main.primstage.getIcons().add(new Image("orange.png"));
 						}
 					}
 				}
 			});
+		}else{
+			
 		}
 	}
 }

@@ -6,7 +6,7 @@ import me.Christian.networking.Client;
 public class ConsoleCommandParser {
 	public static Hashtable<String, String> UserTable = new Hashtable<String, String>();
 
-	public static String[] Commands = {".help", ".connect <IP> <Port>", ".channel <Channelname> <ChannelPw>" , ".disconnect", ".admin", ".friend", ".clear"};
+	public static String[] Commands = {".help", ".connect <IP> <Port>", ".channel <Channelname> <ChannelPw>" , ".disconnect", ".admin", ".friend", ".clear", ".c", ".clearconsole", ".cc", ".clearall", ".ca"};
 	public static void parse(String[] Args){
 		if(Args[0].equals(".help")){
 			Main.AddToMessageField(".System Available Commands:", 0);
@@ -43,7 +43,16 @@ public class ConsoleCommandParser {
 		}else if(Args[0].equals(".kick")){
 			String temp = Main.onlineusers.getSelectionModel().getSelectedItem();
 			Client.processMessage(".kick " + temp);
-		}else if(Args[0].equals(".clear")){
+		}else if(Args[0].equals(".clear") || Args[0].equals(".c")){
+			Main.content.getChildren().clear();
+			Main.text.clear();
+		}else if(Args[0].equals(".clearconsole") || Args[0].equals(".cc")){
+			Main.console.setText("");
+		}else if(Args[0].equals(".ACA")){
+			Main.text.clear();
+			Client.processMessage(".ACA");
+		}else if(Args[0].equals(".clearall") || Args[0].equals(".ca")){
+			Main.console.setText("");
 			Main.content.getChildren().clear();
 			Main.text.clear();
 		}else if(Args[0].equals(".channel")){
