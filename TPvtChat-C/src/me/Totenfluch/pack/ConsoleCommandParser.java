@@ -13,7 +13,7 @@ public class ConsoleCommandParser {
 			for(int i = 0; i<Commands.length; i++){
 				Main.AddToMessageField("	" + Commands[i], 0);
 			}
-			Main.text.setText("");
+			Main.TextInputField.setText("");
 		}else if(Args[0].equals(".connect")){
 			Main.content.getChildren().clear();
 			if(Args.length > 2){
@@ -25,36 +25,36 @@ public class ConsoleCommandParser {
 			}else{
 				Main.AddToConsoleField("[-] Invalid Port OR IP");
 			}
-			Main.text.setText("");
+			Main.TextInputField.setText("");
 		}else if(Args[0].equals(".disconnect")){
 			Main.content.getChildren().clear();
 			Main.DisconnectFromServer();
-			Main.text.setText("");
+			Main.TextInputField.setText("");
 		}else if(Args[0].equals(".admin")){
 			Client.processMessage(".admin");
-			Main.text.setText("");
+			Main.TextInputField.setText("");
 		}else if(Args[0].equals(".friend")){
 			String temp = Main.onlineusers.getSelectionModel().getSelectedItem();
 			Main.AddToMessageField(".System Added " + temp + " as friend.", 0);
 			Main.ChangeCellColor(1, temp);
 			UserTable.remove(temp);
 			UserTable.put(temp, "Friend");
-			Main.text.setText("");
+			Main.TextInputField.setText("");
 		}else if(Args[0].equals(".kick")){
 			String temp = Main.onlineusers.getSelectionModel().getSelectedItem();
 			Client.processMessage(".kick " + temp);
 		}else if(Args[0].equals(".clear") || Args[0].equals(".c")){
 			Main.content.getChildren().clear();
-			Main.text.clear();
+			Main.TextInputField.clear();
 		}else if(Args[0].equals(".clearconsole") || Args[0].equals(".cc")){
 			Main.console.setText("");
 		}else if(Args[0].equals(".ACA")){
-			Main.text.clear();
+			Main.TextInputField.clear();
 			Client.processMessage(".ACA");
 		}else if(Args[0].equals(".clearall") || Args[0].equals(".ca")){
 			Main.console.setText("");
 			Main.content.getChildren().clear();
-			Main.text.clear();
+			Main.TextInputField.clear();
 		}else if(Args[0].equals(".channel")){
 			if(Args.length > 1){
 				Main.SwitchChannel(Args[1], "");
@@ -74,7 +74,7 @@ public class ConsoleCommandParser {
 					Main.content.setPrefWidth(445);
 					Main.OpenOptions.setText(">");
 				}
-				Main.text.setText("");
+				Main.TextInputField.setText("");
 			}
 		}else{
 			Main.AddToConsoleField("[-] Invalid command");

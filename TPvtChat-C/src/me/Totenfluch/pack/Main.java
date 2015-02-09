@@ -18,9 +18,11 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
@@ -38,7 +40,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextBoundsType;
+import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Callback;
@@ -57,10 +59,10 @@ public class Main extends Application{
 
 	// GUI Stuff
 	public static Stage primstage;
-	public static TextField text;
+	public static TextField TextInputField;
 	public static TextArea console;
 	public static ScrollPane messageSP;
-	public static TextField[] messagelist = new TextField[50];
+	public static HBox[] messagelist = new HBox[50];
 	public static ListView<String> onlineusers;
 	public static TextField Keyfield, Username, MessageSendDelayField, ChannelField, ChannelPasswordField;
 	public static CheckBox DontSend;
@@ -71,6 +73,7 @@ public class Main extends Application{
 	public static Button OpenOptions;
 	public static VBox content;
 	public static HBox centerfield;
+	public static CheckBox StyleChooser;
 	public static final ObservableList<String> names = 
 			FXCollections.observableArrayList();
 
@@ -106,12 +109,13 @@ public class Main extends Application{
 		HBox bottomfield = new HBox();
 
 		// BOTTOM
-		text = new TextField("");
-		text.setPrefSize(900, 20);
-		text.setFont(Font.font("Futura", 13));
-		text.setOnAction(new EventHandler<ActionEvent>() {
+		TextInputField = new TextField("");
+		TextInputField.setPrefHeight(20);
+		TextInputField.setPrefWidth(6000);
+		TextInputField.setFont(Font.font("Futura", 13));
+		TextInputField.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent e) {
-				String Text = text.getText();
+				String Text = TextInputField.getText();
 				if(Text.startsWith(".")){
 					String Args[] = Text.split(" ");
 					ConsoleCommandParser.parse(Args);
@@ -120,43 +124,65 @@ public class Main extends Application{
 						if(!MessageSendDelayField.getText().equals("")){
 							if(Integer.valueOf(MessageSendDelayField.getText()) > 0){
 								if(Client.IsConnectedToServer){
-									final int wn = Integer.valueOf(MessageSendDelayField.getText());
-									final TextField xp = AddToMessageField("<"+wn+"> ["+Main.ActiveUsername+"]-> " + Text , 0);
-									final String ourtext = "["+Main.ActiveUsername+"]-> " + Text;
-									Timeline aftertickz = new Timeline(new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
-										@Override
-										public void handle(ActionEvent arg0) {
-											int pn = Integer.valueOf(xp.getText().split("<")[1].split(">")[0]);
-											if(pn > 0){
-												pn--;
-												xp.setText("<"+pn+">"+ourtext);
-											}else{
-												xp.setText("<PENDING> text " + ourtext);
-												if(Client.IsConnectedToServer){
-													Crypter.doYourThing("text "+ ourtext);
+									if(StyleChooser.isSelected()){
+										final int wn = Integer.valueOf(MessageSendDelayField.getText());
+										final TextField xp = AddToMessageField("<"+wn+"> ["+Main.ActiveUsername+"]-> " + Text , 0);
+										final String ourtext = "["+Main.ActiveUsername+"]-> " + Text;
+										Timeline aftertickz = new Timeline(new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
+											@Override
+											public void handle(ActionEvent arg0) {
+												int pn = Integer.valueOf(xp.getText().split("<")[1].split(">")[0]);
+												if(pn > 0){
+													pn--;
+													xp.setText("<"+pn+">"+ourtext);
 												}else{
-													xp.setText("<Local> "+ourtext);
+													xp.setText("<PENDING> text " + ourtext);
+													if(Client.IsConnectedToServer){
+														Crypter.doYourThing("text "+ ourtext);
+													}else{
+														xp.setText("<Local> "+ourtext);
+													}
 												}
 											}
-										}
-									}));
-									aftertickz.setCycleCount(wn+1);
-									aftertickz.play();
-									text.setText("");
+										}));
+										aftertickz.setCycleCount(wn+1);
+										aftertickz.play();
+										TextInputField.setText("");
+									}else{
+										// NEW TEXT FORMAT TODO
+									}
 								}else{
-									AddToMessageField("<Local> [" + ActiveUsername + "]->" + Text, 0);
-									text.setText("");
+									if(StyleChooser.isSelected()){
+										AddToMessageField("<Local> [" + ActiveUsername + "]->" + Text, 0);
+										TextInputField.setText("");
+									}else{
+										AlternativeAddToMessageField("<Local> " + Text, 0, ActiveUsername);
+										TextInputField.setText("");
+									}
 								}
 							}
 						}else if(Client.IsConnectedToServer){
-							String ta = "text ["+ Main.ActiveUsername + "]-> ";
-							Text = ta + Text;
-							AddToMessageField("<PENDING> " + Text, 0);
-							Crypter.doYourThing(Text);
-							text.setText("");
+							if(StyleChooser.isSelected()){
+								String ta = "text ["+ Main.ActiveUsername + "]-> ";
+								Text = ta + Text;
+								AddToMessageField("<PENDING> " + Text, 0);
+								Crypter.doYourThing(Text);
+								TextInputField.setText("");
+							}else{
+								String ta = "text ["+ Main.ActiveUsername + "]-> ";
+								Text = ta + Text;
+								AlternativeAddToMessageField("<PENDING> " + Text, 0, Main.ActiveUsername);
+								Crypter.doYourThing(Text);
+								TextInputField.setText("");
+							}
 						}else{
-							AddToMessageField("<Local> [" + ActiveUsername + "]->" + Text, 0);
-							text.setText("");
+							if(StyleChooser.isSelected()){
+								AddToMessageField("<Local> [" + ActiveUsername + "]->" + Text, 0);
+								TextInputField.setText("");
+							}else{
+								AlternativeAddToMessageField("<Local> " + Text, 0, ActiveUsername);
+								TextInputField.setText("");
+							}
 						}
 					}
 				}
@@ -167,7 +193,7 @@ public class Main extends Application{
 		bottomfield.setSpacing(10);
 		bottomfield.setAlignment(Pos.CENTER);
 
-		bottomfield.getChildren().add(text);
+		bottomfield.getChildren().add(TextInputField);
 		border.setBottom(bottomfield);
 
 		// Center messages
@@ -175,8 +201,9 @@ public class Main extends Application{
 		centerfield = new HBox();
 		centerfield.setAlignment(Pos.CENTER);
 
+
 		messageSP = new ScrollPane();
-		messageSP.setPrefWidth(690);
+		messageSP.setFitToWidth(false);
 		messageSP.setPadding(new Insets(0, 2, 2, 10));
 		messageSP.setStyle("-fx-background: transparent");
 		messageSP.setStyle("-fx-background-color:transparent;");
@@ -184,9 +211,43 @@ public class Main extends Application{
 
 		content = new VBox();
 		content.setPadding(new Insets(5, 5, 5, 10));
-		content.setSpacing(5);
+		content.setSpacing(10);
 		content.setAlignment(Pos.TOP_LEFT);
-		content.setPrefWidth(635);
+
+		content.setMaxWidth(primaryStage.getWidth()-268);
+		content.setPrefWidth(primaryStage.getWidth()-268);
+
+		primaryStage.widthProperty().addListener(new ChangeListener<Number>() {
+			public void changed(ObservableValue<? extends Number> arg0,
+					Number old, Number nnew) {
+
+				if(nnew.intValue() < 300){
+					primaryStage.setWidth(300);
+				}else{
+					content.setMaxWidth(nnew.intValue()-268);
+					content.setPrefWidth(nnew.intValue()-268);
+
+					for(int i = 0; i < messagelist.length; i++){
+						if(messagelist[i] != null) {
+							messagelist[i].setPrefWidth(content.getPrefWidth()-10);
+							messagelist[i].setMaxWidth(content.getMaxWidth()-10);
+						}
+					}
+				}
+			}
+		});
+
+		primaryStage.heightProperty().addListener(new ChangeListener<Number>() {
+			public void changed(ObservableValue<? extends Number> arg0,
+					Number arg1, Number nnew) {
+				if(nnew.intValue() < 200){
+					primaryStage.setHeight(200);
+				}
+
+			}
+		});
+
+
 
 		messageSP.setContent(content);
 
@@ -195,7 +256,7 @@ public class Main extends Application{
 		console.setPrefWidth(200);
 		console.setStyle("-fx-background-color: black;");
 		console.setEditable(false);
-		console.setWrapText(false);
+		console.setWrapText(true);
 
 		content.heightProperty().addListener(new ChangeListener<Number>() {
 			@Override
@@ -206,9 +267,9 @@ public class Main extends Application{
 
 		centerfield.setPadding(new Insets(15, 12, 15, 12));
 		centerfield.setSpacing(10);
-		
+
 		VBox ButtonLeft = new VBox();
-		
+
 		OpenOptions = new Button("<");
 		OpenOptions.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -219,11 +280,11 @@ public class Main extends Application{
 		});
 		OpenOptions.setPrefHeight(1920);
 		ButtonLeft.setPadding(new Insets(15, 0, 12, 12));
-		
+
 		ButtonLeft.getChildren().add(OpenOptions);
-		
+
 		border.setLeft(ButtonLeft);
-		
+
 		centerfield.getChildren().add(messageSP);
 
 
@@ -323,7 +384,7 @@ public class Main extends Application{
 						}
 					}));
 					aftertickz.play();
-					
+
 					Username.setText(Main.ActiveUsername);
 				}
 			}
@@ -381,10 +442,15 @@ public class Main extends Application{
 				}
 			}
 		});
+
+		StyleChooser = new CheckBox("Old Style");
+		StyleChooser.setFont(Font.font("Futura", FontWeight.BOLD, 9));
+		StyleChooser.setStyle("-fx-text-fill: lime;");
+
 		border.setStyle("-fx-background-image: url('lol.jpg'); -fx-background-position: center center; -fx-background-size: 900 600;");
 
 
-		TopBoxes.getChildren().addAll(UsernameRefresh, Username, /*FontSize, colorPicker, FontChooser,*/ MessageSendDelayText, MessageSendDelayField, DontSend);
+		TopBoxes.getChildren().addAll(UsernameRefresh, Username, /*FontSize, colorPicker, FontChooser,*/ MessageSendDelayText, MessageSendDelayField, DontSend, StyleChooser);
 
 		TopBoxes.setSpacing(10);
 		TopBoxes.setPadding(new Insets(15, 12, 0, 12));
@@ -432,10 +498,10 @@ public class Main extends Application{
 				}else if(ke.getCode() == KeyCode.ALT_GRAPH){
 					String[] xn = {".c"};
 					ConsoleCommandParser.parse(xn);
-				}else if(ke.getCode() == KeyCode.CONTROL){
+				}/*else if(ke.getCode() == KeyCode.CONTROL){
 					String[] xn = {".ACA"};
 					ConsoleCommandParser.parse(xn);
-				}
+				}*/
 			}
 		});
 
@@ -451,8 +517,14 @@ public class Main extends Application{
 		});
 
 
-		AddToMessageField("TPvtChat-C Beta | Type .help for informations", 2);
-		AddToMessageField("CTRL Clear all user's chat, ALT GR clear yours", 2);
+		Timeline tf = new Timeline(new KeyFrame(Duration.millis(300), new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent arg0) {
+				AddToMessageField("TPvtChat-C Release (1.0) | Type .help for informations", 2);
+				AddToMessageField("CTRL Clear all user's chat, ALT GR clear yours", 2);
+			}
+		}));
+		tf.play();
 
 
 		primaryStage.setScene(s);
@@ -461,7 +533,8 @@ public class Main extends Application{
 	}
 
 	public static TextField AddToMessageField(String s, int owner){
-		TextField xn = createBubble(s, owner);
+		HBox xn = createBubble(s, owner);
+		xn.setId("b");
 		content.getChildren().add(xn);
 
 		for(int i=messagelist.length-1;i>-1;i--){
@@ -473,12 +546,96 @@ public class Main extends Application{
 				messagelist[0] = xn;
 			}
 			if(i == messagelist.length-1){
-				TextField w = messagelist[messagelist.length-1];
+				HBox w = messagelist[messagelist.length-1];
 				content.getChildren().remove(w);
 			}
 		}
 
-		return xn;
+		ObservableList<Node> obvn = xn.getChildren();
+		TextField xp = null;
+		for(Node xxn : obvn){
+			xp = (TextField)xxn;
+		}
+		xp.setId("b");
+		return xp;
+	}
+
+	public static void AlternativeAddToMessageField(String s, int owner, String Sender){
+		HBox hnb = new HBox();
+
+		if(Sender.length() < 16){
+			for(int i=Sender.length(); i<=16; i++){
+				//Sender = " " + Sender;
+				Sender += " ";
+			}
+		}
+		Text Usernamedisplay = new Text(Sender);
+		Usernamedisplay.setId(Sender);
+		Usernamedisplay.setFont(new Font("Courier New", 13));
+		if(Sender.replace(" ", "").equals(ActiveUsername)){
+			Usernamedisplay.setFill(Color.BLUE);
+		}
+		if(messagelist[0] != null){
+			ObservableList<Node> hpp = messagelist[0].getChildren();
+			for(Node node: hpp){
+				try{
+					if(node != null){
+						if(node.getId() != null && !node.getId().equals("t") && !node.getId().equals("b")){
+							Text f = (Text)node;
+							if(f.getId().equals(Sender)){
+								Usernamedisplay.setText("                 ");
+							}
+						}
+
+					}
+				}catch(Exception e){
+					e.printStackTrace();
+				}
+			}
+		}
+
+		Text text2 = new Text(s);
+		text2.setFill(Color.BLACK);
+		text2.setFont(Font.font("Arial", 14));
+		TextFlow tf = new TextFlow(text2);
+		tf.setOnMouseClicked(new EventHandler<Event>() {
+			@Override
+			public void handle(Event arg0) {
+				HBox xp = hnb;
+				for(int i = 0; i < messagelist.length; i++ ){
+					if(messagelist[i] != null){
+						if(messagelist[i].equals(xp)){
+							content.getChildren().remove(messagelist[i]);
+						}
+					}
+				}
+			}
+		});
+		text2.setId("t");
+		tf.setId("t");
+
+
+		hnb.setSpacing(10);
+		hnb.getChildren().addAll(Usernamedisplay, tf);
+
+		hnb.setMaxWidth(content.getMaxWidth());
+		hnb.setId("t");
+		hnb.setAlignment(Pos.BASELINE_LEFT);
+		content.getChildren().add(hnb);
+
+		for(int i=messagelist.length-1;i>-1;i--){
+			if(i != messagelist.length-1 && i != 0){
+				messagelist[i+1] = messagelist[i];
+			}
+			if(i == 0){
+				messagelist[1] = messagelist[0];
+				messagelist[0] = hnb;
+			}
+			if(i == messagelist.length-1){
+				HBox w = messagelist[messagelist.length-1];
+				content.getChildren().remove(w);
+			}
+		}
 	}
 
 	@SuppressWarnings("unused")
@@ -500,12 +657,36 @@ public class Main extends Application{
 
 		for(int i=0; i<messagelist.length; i++){
 			if(messagelist[i] != null){
-				if(messagelist[i].getText().equals(s)){
-					found = true;
-					if(!DontSend.isSelected()){
-						messagelist[i].setText(s.replace("<PENDING> text ", ""));
+				ObservableList<Node> obvn = messagelist[i].getChildren();
+				for(Node xn : obvn){
+					if(xn.getId() != null){
+						if(xn.getId().equals("t")){
+							TextFlow tff = (TextFlow)xn;
+							ObservableList<Node> obvnn = tff.getChildren();
+							for(Node n : obvnn){
+								Text xnn = (Text)n;
+								if(xnn.getText().equals(s)){
+									String temp21 = s.substring(15, s.length());
+									String text = temp21.substring(temp21.indexOf("]")+4, temp21.length());
+									xnn.setText(text);
+									found = true;
+								}
+							}
+						}else if(xn.getId().equals("b")){
+							TextField fn = (TextField)xn;
+							if(messagelist[i] != null){
+								if(fn.getText().equals(s)){
+									found = true;
+									if(!DontSend.isSelected()){
+										fn.setText(s.replace("<PENDING> text ", ""));
+									}else{
+										fn.setText(s.replace("<PENDING> text ", "<NOT SENT>"));
+									}
+								}
+							}
+						}
 					}else{
-						messagelist[i].setText(s.replace("<PENDING> text ", "<NOT SENT>"));
+						return true;
 					}
 				}
 			}
@@ -625,7 +806,7 @@ public class Main extends Application{
 	}
 
 
-	public static TextField createBubble(String txt, int owner){
+	public static HBox createBubble(String txt, int owner){
 		TextField textf = new TextField(txt);
 		textf.setEditable(false);
 		if(owner == 0){
@@ -638,51 +819,16 @@ public class Main extends Application{
 			textf.setStyle("-fx-border-color: Brown; -fx-border-width: 2px ;");	
 			textf.setAlignment(Pos.BASELINE_CENTER);
 		}
-		textf.setPrefWidth(computeTextWidth(textf.getFont(),
-				textf.getText(), 0.0D) + 10);
+
 		textf.setFont(Font.font("Futura", 15));
-		if(textf.getPrefWidth() > content.getPrefWidth()){
-			textf.setPrefWidth(content.getPrefWidth()-10);
-			textf.setPadding(new Insets(15, 15, 15, 15));
-			double n = 15;
-			while(computeTextWidth(textf.getFont(), textf.getText(), 0.0D)+50 > content.getPrefWidth() && n > 11){
-				n -= 0.25;
-				textf.setFont(Font.font("Futura", n));
-			}
-		}else{
-			textf.setPadding(new Insets(10, 10, 10, 10));
-		}
+		textf.setPrefWidth(content.getPrefWidth()-25);
+		textf.setMaxWidth(content.getMaxWidth()-25);
 
-		return textf;
+		HBox hfn = new HBox(textf);
+		hfn.setPrefWidth(content.getPrefWidth()-25);
+		hfn.setMaxWidth(content.getMaxWidth()-25);
+
+		return hfn;
 	}
 
-	static final Text helper;
-	static final double DEFAULT_WRAPPING_WIDTH;
-	static final double DEFAULT_LINE_SPACING;
-	static final String DEFAULT_TEXT;
-	static final TextBoundsType DEFAULT_BOUNDS_TYPE;
-	static {
-		helper = new Text();
-		DEFAULT_WRAPPING_WIDTH = helper.getWrappingWidth();
-		DEFAULT_LINE_SPACING = helper.getLineSpacing();
-		DEFAULT_TEXT = helper.getText();
-		DEFAULT_BOUNDS_TYPE = helper.getBoundsType();
-	}
-
-	public static double computeTextWidth(Font font, String text, double help0) {
-
-		helper.setText(text);
-		helper.setFont(font);
-
-		helper.setWrappingWidth(0.0D);
-		helper.setLineSpacing(0.0D);
-		double d = Math.min(helper.prefWidth(-1.0D), help0);
-		helper.setWrappingWidth((int) Math.ceil(d));
-		d = Math.ceil(helper.getLayoutBounds().getWidth());
-
-		helper.setWrappingWidth(DEFAULT_WRAPPING_WIDTH);
-		helper.setLineSpacing(DEFAULT_LINE_SPACING);
-		helper.setText(DEFAULT_TEXT);
-		return d;
-	}
 }

@@ -62,7 +62,7 @@ public class GetServerMessages{
 					}else{
 						Main.names.add(Args[2]);
 					}
-					
+
 					if(ConsoleCommandParser.UserTable.contains(Args[1])){
 						ConsoleCommandParser.UserTable.remove(Args[1]);
 						ConsoleCommandParser.UserTable.put(Args[2], "User");
@@ -81,7 +81,7 @@ public class GetServerMessages{
 				public void run() {
 					Main.console.setText("");
 					Main.content.getChildren().clear();
-					Main.text.clear();
+					Main.TextInputField.clear();
 				}
 			});
 		}else if(Crypter.decrypt(Crypter.decrypt(Crypter.decrypt(Crypter.decrypt(FullMsg, 0), 1), 2), 3).startsWith("text")){
@@ -90,7 +90,14 @@ public class GetServerMessages{
 				@Override
 				public void run() {
 					if(Main.RemoveFromMessageField(entrymsg)){
-						Main.AddToMessageField(entrymsg.replace("text ", ""), 1);
+						if(Main.StyleChooser.isSelected()){
+							Main.AddToMessageField(entrymsg.replace("text ", ""), 1);
+						}else{
+							String temp21 = entrymsg.substring(5, entrymsg.length());
+							String Sender = temp21.substring(1, temp21.indexOf("]"));
+							String text = temp21.substring(temp21.indexOf("]")+4, temp21.length());
+							Main.AlternativeAddToMessageField(text, 0, Sender);
+						}
 						if(!Main.primstage.isFocused()){
 							Main.primstage.getIcons().add(new Image("orange.png"));
 						}
@@ -98,7 +105,7 @@ public class GetServerMessages{
 				}
 			});
 		}else{
-			
+
 		}
 	}
 }
