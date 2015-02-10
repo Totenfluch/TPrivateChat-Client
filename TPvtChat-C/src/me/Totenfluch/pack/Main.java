@@ -647,6 +647,7 @@ public class Main extends Application{
 		Text timestamp = new Text(getTime());
 		timestamp.setFont(new Font("Futura", 11));
 		timestamp.setFill(Color.GREY);
+		timestamp.setId("T");
 		
 		
 		hnb.setSpacing(10);
