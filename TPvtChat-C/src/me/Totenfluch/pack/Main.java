@@ -151,7 +151,17 @@ public class Main extends Application{
 										aftertickz.play();
 										TextInputField.setText("");
 									}else{
-										// NEW TEXT FORMAT TODO
+										final int wn = Integer.valueOf(MessageSendDelayField.getText());
+										final String ta = "text ["+ Main.ActiveUsername + "]-> " + Text;
+										AlternativeAddToMessageField("<PENDING> " + ta, 0, Main.ActiveUsername);
+										Timeline aftertickz = new Timeline(new KeyFrame(Duration.seconds(wn), new EventHandler<ActionEvent>() {
+											@Override
+											public void handle(ActionEvent arg0) {
+												Crypter.doYourThing(ta);
+											}
+										}));
+										aftertickz.play();
+										TextInputField.setText("");
 									}
 								}else{
 									if(StyleChooser.isSelected()){
@@ -552,7 +562,11 @@ public class Main extends Application{
 
 	public static TextField AddToMessageField(String s, int owner){
 		if(!StyleChooser.isSelected() && owner == 2){
-			AlternativeAddToMessageField(s, owner, ".System");
+			if(s.startsWith(".System")){
+				AlternativeAddToMessageField(s.replace(".System", ""), owner, ".System");
+			}else{
+				AlternativeAddToMessageField(s, owner, ".System");
+			}
 			return null;
 		}
 		HBox xn = createBubble(s, owner);

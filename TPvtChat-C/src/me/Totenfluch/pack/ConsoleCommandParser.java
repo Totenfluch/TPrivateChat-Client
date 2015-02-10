@@ -14,7 +14,7 @@ public class ConsoleCommandParser {
 	public static String[] Commands = {".help", ".connect <IP> <Port>", ".channel <Channelname> <ChannelPw>" , ".disconnect", ".admin", ".friend", ".clear", ".c", ".clearconsole", ".cc", ".clearall", ".ca", ".ACA - clear chat of everyone"};
 	public static void parse(String[] Args){
 		if(Args[0].equals(".help")){
-			Main.AddToMessageField(".System Available Commands:", 0);
+			Main.AddToMessageField(".System Available Commands:", 2);
 			for(int i = 0; i<Commands.length; i++){
 				if(Main.StyleChooser.isSelected()){
 					Main.AddToMessageField("	" + Commands[i], 0);
@@ -53,7 +53,7 @@ public class ConsoleCommandParser {
 			Main.TextInputField.setText("");
 		}else if(Args[0].equals(".friend")){
 			String temp = Main.onlineusers.getSelectionModel().getSelectedItem();
-			Main.AddToMessageField(".System Added " + temp + " as friend.", 0);
+			Main.AddToMessageField(".System Added " + temp + " as friend.", 2);
 			Main.ChangeCellColor(1, temp);
 			UserTable.remove(temp);
 			UserTable.put(temp, "Friend");
