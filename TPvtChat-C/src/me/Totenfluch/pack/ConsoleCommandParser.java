@@ -11,7 +11,7 @@ import me.Christian.networking.Client;
 public class ConsoleCommandParser {
 	public static Hashtable<String, String> UserTable = new Hashtable<String, String>();
 
-	public static String[] Commands = {".help", ".connect <IP> <Port>", ".channel <Channelname> <ChannelPw>" , ".disconnect", ".admin", ".friend", ".clear", ".c", ".clearconsole", ".cc", ".clearall", ".ca"};
+	public static String[] Commands = {".help", ".connect <IP> <Port>", ".channel <Channelname> <ChannelPw>" , ".disconnect", ".admin", ".friend", ".clear", ".c", ".clearconsole", ".cc", ".clearall", ".ca", ".ACA - clear chat of everyone"};
 	public static void parse(String[] Args){
 		if(Args[0].equals(".help")){
 			Main.AddToMessageField(".System Available Commands:", 0);

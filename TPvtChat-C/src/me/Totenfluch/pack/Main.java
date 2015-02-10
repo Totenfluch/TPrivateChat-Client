@@ -55,8 +55,8 @@ public class Main extends Application{
 	public static Object ComputerMac;
 	public static String ComputerName;
 	public static String ComputerIP;
-	public static String ConnectToIp = "192.168.178.38";
-	public static int ConnectToPort = 9977;
+	public static String ConnectToIp;
+	public static int ConnectToPort;
 	public static String ActiveUsername;
 
 	// GUI Stuff
