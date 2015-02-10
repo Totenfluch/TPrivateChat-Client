@@ -5,6 +5,8 @@ package me.Totenfluch.pack;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.UnknownHostException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import me.Christian.networking.Client;
 import javafx.scene.control.CheckBox;
@@ -604,7 +606,7 @@ public class Main extends Application{
 			for(Node node: hpp){
 				try{
 					if(node != null){
-						if(node.getId() != null && !node.getId().equals("t") && !node.getId().equals("b")){
+						if(node.getId() != null && !node.getId().equals("t") && !node.getId().equals("b") && !node.getId().endsWith("I")){
 							Text f = (Text)node;
 							if(f.getId().equals(Sender) && !Sender.replace(" ", "").equals(".System")){
 								Usernamedisplay.setText("                 ");
@@ -638,9 +640,17 @@ public class Main extends Application{
 		text2.setId("t");
 		tf.setId("t");
 
-
+		
+		//ImageView stat = new ImageView();
+		//stat.setId("I");
+		
+		Text timestamp = new Text(getTime());
+		timestamp.setFont(new Font("Futura", 11));
+		timestamp.setFill(Color.GREY);
+		
+		
 		hnb.setSpacing(10);
-		hnb.getChildren().addAll(Usernamedisplay, tf);
+		hnb.getChildren().addAll(timestamp, Usernamedisplay, tf/*, stat*/);
 
 		hnb.setMaxWidth(content.getMaxWidth());
 		hnb.setId("t");
@@ -682,8 +692,17 @@ public class Main extends Application{
 		for(int i=0; i<messagelist.length; i++){
 			if(messagelist[i] != null){
 				ObservableList<Node> obvn = messagelist[i].getChildren();
+				//boolean tn = false;
 				for(Node xn : obvn){
 					if(xn.getId() != null){
+
+						/*if(tn){
+							System.out.println("we did it");
+							ImageView xny = (ImageView)xn;
+							xny.setImage(new Image("sent.png"));
+							tn = false;
+						}*/
+						
 						if(xn.getId().equals("t")){
 							TextFlow tff = (TextFlow)xn;
 							ObservableList<Node> obvnn = tff.getChildren();
@@ -694,6 +713,7 @@ public class Main extends Application{
 									String text = temp21.substring(temp21.indexOf("]")+4, temp21.length());
 									xnn.setText(text);
 									found = true;
+									//tn = true;
 								}
 							}
 						}else if(xn.getId().equals("b")){
@@ -853,6 +873,21 @@ public class Main extends Application{
 		hfn.setMaxWidth(content.getMaxWidth()-25);
 
 		return hfn;
+	}
+	
+	public static String getTime(){
+		Calendar cal = Calendar.getInstance();
+		cal.getTime();
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+		String time = sdf.format(cal.getTime());
+		return time;
+	}
+	
+	public static void ClearMsgField(){
+		Main.content.getChildren().clear();
+		for(int i = 0; i<messagelist.length; i++){
+			messagelist[i] = null;
+		}
 	}
 
 }

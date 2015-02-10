@@ -24,7 +24,7 @@ public class ConsoleCommandParser {
 			}
 			Main.TextInputField.setText("");
 		}else if(Args[0].equals(".connect")){
-			Main.content.getChildren().clear();
+			Main.ClearMsgField();
 			if(Args.length == 3){
 				if(Main.ConnectToServer(Args[1], Integer.valueOf(Args[2]))){
 					Main.AddToConsoleField("[+] Connected to Server: '"  + Args[1] + ":" + Args[2] + "'");
@@ -45,7 +45,7 @@ public class ConsoleCommandParser {
 			}
 			Main.TextInputField.setText("");
 		}else if(Args[0].equals(".disconnect")){
-			Main.content.getChildren().clear();
+			Main.ClearMsgField();
 			Main.DisconnectFromServer();
 			Main.TextInputField.setText("");
 		}else if(Args[0].equals(".admin")){
@@ -63,7 +63,7 @@ public class ConsoleCommandParser {
 			Client.processMessage(".kick " + temp);
 			Main.TextInputField.clear();
 		}else if(Args[0].equals(".clear") || Args[0].equals(".c")){
-			Main.content.getChildren().clear();
+			Main.ClearMsgField();
 			Main.TextInputField.clear();
 		}else if(Args[0].equals(".clearconsole") || Args[0].equals(".cc")){
 			Main.console.setText("");
@@ -73,7 +73,7 @@ public class ConsoleCommandParser {
 			Client.processMessage(".ACA");
 		}else if(Args[0].equals(".clearall") || Args[0].equals(".ca")){
 			Main.console.setText("");
-			Main.content.getChildren().clear();
+			Main.ClearMsgField();
 			Main.TextInputField.clear();
 		}else if(Args[0].equals(".channel")){
 			if(Args.length > 1){

@@ -80,7 +80,7 @@ public class GetServerMessages{
 				@Override
 				public void run() {
 					Main.console.setText("");
-					Main.content.getChildren().clear();
+					Main.ClearMsgField();
 					Main.TextInputField.clear();
 				}
 			});
