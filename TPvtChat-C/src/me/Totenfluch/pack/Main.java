@@ -157,7 +157,11 @@ public class Main extends Application{
 										Timeline aftertickz = new Timeline(new KeyFrame(Duration.seconds(wn), new EventHandler<ActionEvent>() {
 											@Override
 											public void handle(ActionEvent arg0) {
-												Crypter.doYourThing(ta);
+												if(!DontSend.isSelected()){
+													Crypter.doYourThing(ta);
+												}else{
+													AlternativeAddToMessageField("|<X>| Prevented |<X>|: " + ta + " |<X>| from beeing sent. |<X>|", 0, ".System");
+												}
 											}
 										}));
 										aftertickz.play();
