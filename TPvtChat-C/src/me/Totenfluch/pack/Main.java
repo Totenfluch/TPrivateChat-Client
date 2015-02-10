@@ -170,7 +170,6 @@ public class Main extends Application{
 								if(Crypter.doYourThing(Text)){
 									AddToMessageField("<PENDING> " + Text, 0);
 								}
-								Crypter.doYourThing(Text);
 								TextInputField.setText("");
 							}else{
 								String ta = "text ["+ Main.ActiveUsername + "]-> ";

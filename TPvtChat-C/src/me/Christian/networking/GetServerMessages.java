@@ -91,7 +91,7 @@ public class GetServerMessages{
 				public void run() {
 					if(Main.RemoveFromMessageField(entrymsg)){
 						if(Main.StyleChooser.isSelected()){
-							Main.AddToMessageField(entrymsg.replace("text ", ""), 1);
+							Main.AddToMessageField(entrymsg.replace("text ", ""), 0);
 						}else{
 							String temp21 = entrymsg.substring(5, entrymsg.length());
 							String Sender = temp21.substring(1, temp21.indexOf("]"));
