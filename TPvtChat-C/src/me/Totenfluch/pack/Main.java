@@ -165,14 +165,17 @@ public class Main extends Application{
 							if(StyleChooser.isSelected()){
 								String ta = "text ["+ Main.ActiveUsername + "]-> ";
 								Text = ta + Text;
-								AddToMessageField("<PENDING> " + Text, 0);
+								if(Crypter.doYourThing(Text)){
+									AddToMessageField("<PENDING> " + Text, 0);
+								}
 								Crypter.doYourThing(Text);
 								TextInputField.setText("");
 							}else{
 								String ta = "text ["+ Main.ActiveUsername + "]-> ";
 								Text = ta + Text;
-								AlternativeAddToMessageField("<PENDING> " + Text, 0, Main.ActiveUsername);
-								Crypter.doYourThing(Text);
+								if(Crypter.doYourThing(Text)){
+									AlternativeAddToMessageField("<PENDING> " + Text, 0, Main.ActiveUsername);
+								}
 								TextInputField.setText("");
 							}
 						}else{
@@ -220,17 +223,29 @@ public class Main extends Application{
 		primaryStage.widthProperty().addListener(new ChangeListener<Number>() {
 			public void changed(ObservableValue<? extends Number> arg0,
 					Number old, Number nnew) {
-
 				if(nnew.intValue() < 300){
 					primaryStage.setWidth(300);
 				}else{
-					content.setMaxWidth(nnew.intValue()-268);
-					content.setPrefWidth(nnew.intValue()-268);
+					if(Main.console.getParent() == null){
+						content.setMaxWidth(nnew.intValue()-268);
+						content.setPrefWidth(nnew.intValue()-268);
+					}else{
+						content.setMaxWidth(nnew.intValue()-478);
+						content.setPrefWidth(nnew.intValue()-478);
+					}
 
 					for(int i = 0; i < messagelist.length; i++){
 						if(messagelist[i] != null) {
 							messagelist[i].setPrefWidth(content.getPrefWidth()-10);
 							messagelist[i].setMaxWidth(content.getMaxWidth()-10);
+							ObservableList<Node> ovbn = messagelist[i].getChildren();
+							if(ovbn.size() == 1){
+								for(Node n : ovbn){
+									TextField f = (TextField)n;
+									f.setPrefWidth(content.getPrefWidth()-10);
+									f.setMaxWidth(content.getMaxWidth()-10);
+								}
+							}
 						}
 					}
 				}
@@ -253,7 +268,7 @@ public class Main extends Application{
 
 
 		console = new TextArea();
-		console.setPrefWidth(200);
+		console.setMaxWidth(200);
 		console.setStyle("-fx-background-color: black;");
 		console.setEditable(false);
 		console.setWrapText(true);
@@ -490,7 +505,7 @@ public class Main extends Application{
 
 		// Global
 
-		Scene s = new Scene(border, 900, 500);
+		Scene s = new Scene(border, 900, 700);
 		s.setOnKeyPressed(new EventHandler<KeyEvent>() {
 			public void handle(KeyEvent ke) {
 				if (ke.getCode() == KeyCode.ESCAPE) {
@@ -521,7 +536,9 @@ public class Main extends Application{
 			@Override
 			public void handle(ActionEvent arg0) {
 				AddToMessageField("TPvtChat-C Release (1.0) | Type .help for informations", 2);
-				AddToMessageField("CTRL Clear all user's chat, ALT GR clear yours", 2);
+				AddToMessageField("Type: '.connect default' to connect to the Primary Server", 2);
+				AddToMessageField(">ALT GR clear your chat<", 2);
+				AddToConsoleField("[~] Console\n~~~~~~~~~~\n[~] Finished Init");
 			}
 		}));
 		tf.play();
@@ -533,6 +550,10 @@ public class Main extends Application{
 	}
 
 	public static TextField AddToMessageField(String s, int owner){
+		if(!StyleChooser.isSelected() && owner == 2){
+			AlternativeAddToMessageField(s, owner, ".System");
+			return null;
+		}
 		HBox xn = createBubble(s, owner);
 		xn.setId("b");
 		content.getChildren().add(xn);
@@ -574,7 +595,10 @@ public class Main extends Application{
 		Usernamedisplay.setFont(new Font("Courier New", 13));
 		if(Sender.replace(" ", "").equals(ActiveUsername)){
 			Usernamedisplay.setFill(Color.BLUE);
+		}else if(Sender.replace(" ", "").equals(".System")){
+			Usernamedisplay.setFill(Color.RED);
 		}
+		
 		if(messagelist[0] != null){
 			ObservableList<Node> hpp = messagelist[0].getChildren();
 			for(Node node: hpp){
@@ -582,7 +606,7 @@ public class Main extends Application{
 					if(node != null){
 						if(node.getId() != null && !node.getId().equals("t") && !node.getId().equals("b")){
 							Text f = (Text)node;
-							if(f.getId().equals(Sender)){
+							if(f.getId().equals(Sender) && !Sender.replace(" ", "").equals(".System")){
 								Usernamedisplay.setText("                 ");
 							}
 						}
