@@ -160,7 +160,7 @@ public class Main extends Application{
 												if(!DontSend.isSelected()){
 													Crypter.doYourThing(ta);
 												}else{
-													AlternativeAddToMessageField("|<X>| Prevented |<X>|: " + ta + " |<X>| from beeing sent. |<X>|", 0, ".System");
+													RemoveFromMessageField(ta);
 												}
 											}
 										}));
@@ -380,6 +380,22 @@ public class Main extends Application{
 				}
 			}
 		});
+		Keyfield.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent arg0) {
+				if(!Keylock.isDisabled()){
+					if(Keylock.getText().equals("Lock")){
+						Keylock.setText("Unlock");
+						Keyfield.setDisable(true);
+						AddToConsoleField("[+] Using new Key.");
+						Crypter.createKeys();
+					}else{
+						Keylock.setText("Lock");
+						Keyfield.setDisable(false);
+					}
+				}
+			}
+		});
 		TopKey.setSpacing(10);
 		TopKey.getChildren().addAll(Keylock, Keyfield, KeyAmount);
 		TopKey.setPadding(new Insets(15, 12, 0, 12));
@@ -390,34 +406,8 @@ public class Main extends Application{
 		UsernameRefresh.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
-				if(Username.getText().length() > 2 && !(Username.getText().contains(" ") || Username.getText().contains(".") || Username.getText().contains("+"))){
-					if(Client.IsConnectedToServer){
-						Client.processMessage(".namechange " + ActiveUsername + " " + Username.getText());
-					}
-					ActiveUsername = Username.getText();
-					Username.setStyle("-fx-border-color: green; -fx-border-width: 2px ; -fx-text-fill: green");
-					Timeline aftertickz = new Timeline(new KeyFrame(Duration.millis(500), new EventHandler<ActionEvent>() {
-						@Override
-						public void handle(ActionEvent arg0) {
-							Username.setStyle("");
-						}
-					}));
-					aftertickz.play();
-					AddToConsoleField("[+] Changed Username");
-				}else{
-					AddToConsoleField("[-] Failed to change Username");
-					Username.setStyle("-fx-border-color: red; -fx-border-width: 2px ; -fx-text-fill: red");
-					Timeline aftertickz = new Timeline(new KeyFrame(Duration.millis(500), new EventHandler<ActionEvent>() {
-						@Override
-						public void handle(ActionEvent arg0) {
-							Username.setStyle("");
-						}
-					}));
-					aftertickz.play();
-
-					Username.setText(Main.ActiveUsername);
-				}
-			}
+				setUsername();
+			}	
 		});
 		Username = new TextField("");
 		Username.setPromptText("Username");
@@ -429,6 +419,12 @@ public class Main extends Application{
 				if(keyamount > 16){
 					Username.setText(Username.getText().substring(0, 16));
 				}
+			}
+		});
+		Username.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent arg0) {
+				setUsername();
 			}
 		});
 
@@ -617,7 +613,7 @@ public class Main extends Application{
 		}else if(Sender.replace(" ", "").equals(".System")){
 			Usernamedisplay.setFill(Color.RED);
 		}
-		
+
 		if(messagelist[0] != null){
 			ObservableList<Node> hpp = messagelist[0].getChildren();
 			for(Node node: hpp){
@@ -657,16 +653,16 @@ public class Main extends Application{
 		text2.setId("t");
 		tf.setId("t");
 
-		
+
 		//ImageView stat = new ImageView();
 		//stat.setId("I");
-		
+
 		Text timestamp = new Text(getTime());
 		timestamp.setFont(new Font("Futura", 11));
 		timestamp.setFill(Color.GREY);
 		timestamp.setId("T");
-		
-		
+
+
 		hnb.setSpacing(10);
 		hnb.getChildren().addAll(timestamp, Usernamedisplay, tf/*, stat*/);
 
@@ -720,7 +716,7 @@ public class Main extends Application{
 							xny.setImage(new Image("sent.png"));
 							tn = false;
 						}*/
-						
+
 						if(xn.getId().equals("t")){
 							TextFlow tff = (TextFlow)xn;
 							ObservableList<Node> obvnn = tff.getChildren();
@@ -729,9 +725,14 @@ public class Main extends Application{
 								if(xnn.getText().equals(s)){
 									String temp21 = s.substring(15, s.length());
 									String text = temp21.substring(temp21.indexOf("]")+4, temp21.length());
-									xnn.setText(text);
+									//xnn.setText(text);
 									found = true;
 									//tn = true;
+									if(!DontSend.isSelected()){
+										xnn.setText(text);
+									}else{
+										xnn.setText("<NOT SENT> " + text);
+									}
 								}
 							}
 						}else if(xn.getId().equals("b")){
@@ -892,7 +893,7 @@ public class Main extends Application{
 
 		return hfn;
 	}
-	
+
 	public static String getTime(){
 		Calendar cal = Calendar.getInstance();
 		cal.getTime();
@@ -900,11 +901,41 @@ public class Main extends Application{
 		String time = sdf.format(cal.getTime());
 		return time;
 	}
-	
+
 	public static void ClearMsgField(){
 		Main.content.getChildren().clear();
 		for(int i = 0; i<messagelist.length; i++){
 			messagelist[i] = null;
+		}
+	}
+
+	public static void setUsername(){
+		if(Username.getText().length() > 2 && !(Username.getText().contains(" ") || Username.getText().contains(".") || Username.getText().contains("+"))){
+			if(Client.IsConnectedToServer){
+				Client.processMessage(".namechange " + ActiveUsername + " " + Username.getText());
+			}
+			ActiveUsername = Username.getText();
+			Username.setStyle("-fx-border-color: green; -fx-border-width: 2px ; -fx-text-fill: green");
+			Timeline aftertickz = new Timeline(new KeyFrame(Duration.millis(500), new EventHandler<ActionEvent>() {
+				@Override
+				public void handle(ActionEvent arg0) {
+					Username.setStyle("");
+				}
+			}));
+			aftertickz.play();
+			AddToConsoleField("[+] Changed Username");
+		}else{
+			AddToConsoleField("[-] Failed to change Username");
+			Username.setStyle("-fx-border-color: red; -fx-border-width: 2px ; -fx-text-fill: red");
+			Timeline aftertickz = new Timeline(new KeyFrame(Duration.millis(500), new EventHandler<ActionEvent>() {
+				@Override
+				public void handle(ActionEvent arg0) {
+					Username.setStyle("");
+				}
+			}));
+			aftertickz.play();
+
+			Username.setText(Main.ActiveUsername);
 		}
 	}
 
