@@ -126,6 +126,7 @@ public class ConsoleCommandParser {
 				fullcmd += Args[i] + " ";
 			}
 			Client.processMessage(fullcmd);
+			Main.TextInputField.clear();
 		}else{
 			Main.AddToConsoleField("[-] Invalid command");
 		}
