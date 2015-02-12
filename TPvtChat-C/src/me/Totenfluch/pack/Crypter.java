@@ -141,7 +141,7 @@ public class Crypter {
 					Main.AddToConsoleField("[~] Wrong Key.");	
 				}
 			});
-			return "Your String is not Encrypted!"+ikey;
+			return "Your String is not Encrypted! (" + ikey + ")";
 		}
 	}
 

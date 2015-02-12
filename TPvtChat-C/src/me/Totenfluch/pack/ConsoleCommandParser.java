@@ -8,6 +8,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.util.Duration;
 import me.Christian.networking.Client;
+
 public class ConsoleCommandParser {
 	public static Hashtable<String, String> UserTable = new Hashtable<String, String>();
 

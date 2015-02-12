@@ -3,7 +3,6 @@ package me.Totenfluch.pack;
 
 
 import java.net.InetAddress;
-import java.net.NetworkInterface;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -58,15 +57,13 @@ public class Main extends Application{
 	public static Stage primstage;
 	public static TextField TextInputField;
 	public static TextArea console;
-	public static ScrollPane messageSP;
+	private static ScrollPane messageSP;
 	public static HBox[] messagelist = new HBox[50];
 	public static ListView<String> onlineusers;
 	public static TextField Keyfield, Username, MessageSendDelayField, ChannelField, ChannelPasswordField;
 	public static CheckBox DontSend, StyleChooser;
 	public static Button Keylock, OpenOptions;
-	public static Text KeyAmount;
-	public String ActiveFont = "Futura";
-	public int ActiveFontSize = 20;
+	private static Text KeyAmount;
 	public static VBox content;
 	public static HBox centerfield;
 	public static final ObservableList<String> names = 
@@ -78,7 +75,7 @@ public class Main extends Application{
 		} catch (UnknownHostException e1) {
 			e1.printStackTrace();
 		}
-		//ComputerMac = getMacAdress();
+
 		ComputerName = lComputerIP.getHostName();
 		ActiveUsername = Crypter.hashit(ComputerName).substring(0, 16);
 
@@ -676,19 +673,6 @@ public class Main extends Application{
 		}
 	}
 
-	@SuppressWarnings("unused")
-	private String toRgbString(Color c) {
-		return "rgb("
-				+ to255Int(c.getRed())
-				+ "," + to255Int(c.getGreen())
-				+ "," + to255Int(c.getBlue())
-				+ ")";
-	}
-
-	private int to255Int(double d) {
-		return (int) (d * 255);
-	}
-
 	public static boolean RemoveFromMessageField(String s){
 		s = "<PENDING> "+s;
 		boolean found = false;
@@ -800,24 +784,6 @@ public class Main extends Application{
 		return true;
 	}
 
-	public static String getMacAdress(){
-		String ComputerMac = null;
-		try{
-			InetAddress ComputerIP = InetAddress.getLocalHost();
-			NetworkInterface network = NetworkInterface.getByInetAddress(ComputerIP);
-			byte[] mac = network.getHardwareAddress();
-			StringBuilder sb = new StringBuilder();
-			for (int i = 0; i < mac.length; i++) {
-				sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));		
-			}
-			ComputerMac = sb.toString();
-
-		}catch ( Exception e){
-			e.printStackTrace();
-		}
-		return ComputerMac;
-	}
-
 	static class ColorRectCell extends ListCell<String> {
 		@Override
 		public void updateItem(String item, boolean empty) {
@@ -886,10 +852,8 @@ public class Main extends Application{
 
 	public static String getTime(){
 		Calendar cal = Calendar.getInstance();
-		cal.getTime();
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-		String time = sdf.format(cal.getTime());
-		return time;
+		return sdf.format(cal.getTime());
 	}
 
 	public static void ClearMsgField(){
