@@ -25,7 +25,7 @@ public class Crypter {
 	private static byte[] the3rdkey = null;
 	private static byte[] the4thkey = null;
 
-	private static String hashit(String string){
+	public static String hashit(String string){
 		MessageDigest messageDigest;
 		try {
 			messageDigest = MessageDigest.getInstance("MD5");

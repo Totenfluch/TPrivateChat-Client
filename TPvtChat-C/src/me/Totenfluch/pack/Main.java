@@ -11,7 +11,6 @@ import java.util.Calendar;
 import me.Christian.networking.Client;
 import javafx.scene.control.CheckBox;
 import javafx.animation.KeyFrame;
-import javafx.animation.PathTransition;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -51,12 +50,8 @@ import javafx.util.Duration;
 public class Main extends Application{
 	// Server Stuff
 	public static Client connection = null;
-	public static InetAddress lComputerIP;
-	public static Object ComputerMac;
-	public static String ComputerName;
-	public static String ComputerIP;
-	public static String ConnectToIp;
-	public static int ConnectToPort;
+	private static InetAddress lComputerIP;
+	private static String ComputerName;
 	public static String ActiveUsername;
 
 	// GUI Stuff
@@ -67,19 +62,15 @@ public class Main extends Application{
 	public static HBox[] messagelist = new HBox[50];
 	public static ListView<String> onlineusers;
 	public static TextField Keyfield, Username, MessageSendDelayField, ChannelField, ChannelPasswordField;
-	public static CheckBox DontSend;
-	public static Button Keylock;
+	public static CheckBox DontSend, StyleChooser;
+	public static Button Keylock, OpenOptions;
 	public static Text KeyAmount;
 	public String ActiveFont = "Futura";
 	public int ActiveFontSize = 20;
-	public static Button OpenOptions;
 	public static VBox content;
 	public static HBox centerfield;
-	public static CheckBox StyleChooser;
 	public static final ObservableList<String> names = 
 			FXCollections.observableArrayList();
-
-	public static PathTransition OptionBoxFlyIn = new PathTransition();
 
 	public static void main(String[] args){
 		try {
@@ -89,8 +80,7 @@ public class Main extends Application{
 		}
 		//ComputerMac = getMacAdress();
 		ComputerName = lComputerIP.getHostName();
-		ComputerIP = lComputerIP.getHostAddress();
-		ActiveUsername = ComputerName;
+		ActiveUsername = Crypter.hashit(ComputerName).substring(0, 16);
 
 		launch(args);
 	}
